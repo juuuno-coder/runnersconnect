@@ -16,7 +16,7 @@ primary_region = "nrt"  # 도쿄 (한국에서 가장 가까운 리전)
   RAILS_SERVE_STATIC_FILES = "true"
 
 [http_service]
-  internal_port = 3000
+  internal_port = 8080
   force_https = true
   auto_stop_machines = "stop"
   auto_start_machines = true
