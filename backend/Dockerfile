@@ -28,6 +28,12 @@ RUN bundle install && \
 # Copy application code
 COPY . .
 
+# Precompile bootsnap code for faster boot times
+RUN bundle exec bootsnap precompile app/ lib/
+
+# Precompile assets (Tailwind CSS + JS)
+RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+
 # Final stage for app image
 FROM base
 
