@@ -13,7 +13,8 @@
     <!-- Portone Payment SDK -->
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 
-    <link rel="stylesheet" href="/tailwind.css" data-turbo-track="reload">
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
