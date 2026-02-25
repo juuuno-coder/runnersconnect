@@ -1,0 +1,168 @@
+<div class="space-y-6">
+  <!-- 페이지 헤더 -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-black text-gray-900">참가자 상세 정보</h1>
+      <p class="text-gray-500 font-medium mt-2"><%= @race.title %></p>
+    </div>
+    <%= link_to "← 참가자 목록", organizer_race_participants_path(@race), class: "text-sm font-bold text-gray-600 hover:text-gray-900" %>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- 참가자 기본 정보 -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- 프로필 카드 -->
+      <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+        <div class="flex items-start gap-6">
+          <% if @registration.user.avatar.attached? %>
+            <%= image_tag @registration.user.avatar.variant(:medium), class: "w-24 h-24 rounded-2xl object-cover ring-4 ring-gray-100" %>
+          <% else %>
+            <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-3xl font-black ring-4 ring-gray-100">
+              <%= @registration.user.display_name[0].upcase %>
+            </div>
+          <% end %>
+
+          <div class="flex-1">
+            <h2 class="text-2xl font-black text-gray-900 mb-2"><%= @registration.user.name %></h2>
+            <div class="flex items-center gap-3 mb-4">
+              <% if @registration.user.gender == 'male' %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-100 text-blue-800">남성</span>
+              <% elsif @registration.user.gender == 'female' %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-pink-100 text-pink-800">여성</span>
+              <% end %>
+              <% if @registration.user.age_group.present? %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-gray-100 text-gray-800"><%= @registration.user.age_group %></span>
+              <% end %>
+              <% if @registration.user.region.present? %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-green-100 text-green-800"><%= @registration.user.region %></span>
+              <% end %>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p class="text-gray-500 font-medium mb-1">이메일</p>
+                <p class="text-gray-900 font-bold"><%= @registration.user.email %></p>
+              </div>
+              <div>
+                <p class="text-gray-500 font-medium mb-1">전화번호</p>
+                <p class="text-gray-900 font-bold"><%= @registration.user.phone || '-' %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 참가 정보 -->
+      <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+        <h3 class="text-xl font-black text-gray-900 mb-6">참가 정보</h3>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <p class="text-gray-500 font-medium mb-2">등번호</p>
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 text-indigo-800 font-black text-2xl rounded-xl">
+                <%= @registration.bib_number %>
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-gray-500 font-medium mb-2">참가 종목</p>
+            <p class="text-gray-900 font-bold text-lg"><%= @registration.race_edition.name %></p>
+            <p class="text-gray-500 text-sm"><%= @registration.race_edition.distance %>km</p>
+          </div>
+
+          <div>
+            <p class="text-gray-500 font-medium mb-2">참가비</p>
+            <p class="text-gray-900 font-bold text-lg"><%= number_to_currency(@registration.payment_amount) %></p>
+          </div>
+
+          <div>
+            <p class="text-gray-500 font-medium mb-2">신청 상태</p>
+            <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold bg-green-100 text-green-800">
+              <%= @registration.status %>
+            </span>
+          </div>
+
+          <div>
+            <p class="text-gray-500 font-medium mb-2">신청일시</p>
+            <p class="text-gray-900 font-bold"><%= @registration.created_at.strftime('%Y년 %m월 %d일 %H:%M') %></p>
+          </div>
+
+          <div>
+            <p class="text-gray-500 font-medium mb-2">QR 토큰</p>
+            <p class="text-gray-600 font-mono text-xs"><%= @registration.qr_token %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 배송 정보 -->
+      <% if @registration.shipping_address.present? %>
+        <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+          <h3 class="text-xl font-black text-gray-900 mb-6">배송 정보</h3>
+
+          <div class="space-y-4">
+            <div>
+              <p class="text-gray-500 font-medium mb-2">배송 주소</p>
+              <p class="text-gray-900 font-bold"><%= @registration.shipping_address %></p>
+            </div>
+
+            <div>
+              <p class="text-gray-500 font-medium mb-2">배송 상태</p>
+              <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold bg-blue-100 text-blue-800">
+                <%= @registration.shipping_status %>
+              </span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 사이드바 - 빠른 액션 -->
+    <div class="space-y-6">
+      <!-- QR 코드 (추후 구현) -->
+      <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm text-center">
+        <h3 class="text-lg font-black text-gray-900 mb-4">참가자 QR 코드</h3>
+        <div class="w-full h-48 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-16 h-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+          </svg>
+        </div>
+        <p class="text-sm text-gray-500 font-medium">현장 체크인용 QR 코드</p>
+      </div>
+
+      <!-- 빠른 통계 -->
+      <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+        <h3 class="text-lg font-black text-gray-900 mb-4">참가 기록</h3>
+
+        <% user_records = @registration.user.records.where(race_id: @race.id) %>
+        <% if user_records.any? %>
+          <% user_records.each do |record| %>
+            <div class="mb-4">
+              <p class="text-gray-500 font-medium text-sm mb-1">완주 시간</p>
+              <p class="text-2xl font-black text-indigo-600"><%= Time.at(record.completion_time).utc.strftime('%H:%M:%S') %></p>
+              <% if record.pace_per_km.present? %>
+                <p class="text-sm text-gray-500 mt-1">페이스: <%= record.pace_per_km %>/km</p>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="text-gray-400 text-sm">아직 기록이 없습니다</p>
+        <% end %>
+      </div>
+
+      <!-- 빠른 액션 버튼 -->
+      <div class="bg-gray-50 rounded-2xl border border-gray-200 p-6 space-y-3">
+        <h3 class="text-sm font-black text-gray-600 uppercase tracking-wider mb-3">빠른 액션</h3>
+
+        <%= link_to organizer_race_bib_numbers_path(@race), class: "block w-full px-4 py-3 bg-white hover:bg-gray-50 text-gray-900 font-bold rounded-lg transition-colors border border-gray-200 text-center" do %>
+          등번호 관리
+        <% end %>
+
+        <button class="block w-full px-4 py-3 bg-gray-100 text-gray-400 font-bold rounded-lg cursor-not-allowed border border-gray-200" disabled>
+          이메일 발송 (준비중)
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

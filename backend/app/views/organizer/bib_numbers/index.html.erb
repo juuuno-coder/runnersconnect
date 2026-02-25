@@ -1,0 +1,99 @@
+<div class="space-y-6">
+  <!-- 페이지 헤더 -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-black text-gray-900"><%= @race.title %> - 등번호 관리</h1>
+      <p class="text-gray-500 font-medium mt-2">참가자별 등번호를 관리하고 일괄 재할당할 수 있습니다</p>
+    </div>
+    <%= link_to "← 대회 상세", organizer_race_path(@race), class: "text-sm font-bold text-gray-600 hover:text-gray-900" %>
+  </div>
+
+  <!-- 종목별 등번호 관리 -->
+  <% @editions.each do |edition| %>
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm">
+      <!-- 종목 헤더 -->
+      <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-black text-gray-900"><%= edition.name %> (<%= edition.distance %>km)</h2>
+          <p class="text-sm text-gray-500 mt-1">
+            총 <%= edition.registrations.where(status: 'paid').count %>명의 참가자
+          </p>
+        </div>
+
+        <%= button_to '등번호 재할당 (선착순)',
+            bulk_reassign_organizer_race_bib_numbers_path(@race, edition_id: edition.id),
+            method: :post,
+            class: 'px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-md hover:shadow-lg',
+            data: {
+              turbo_confirm: '등번호를 재할당하시겠습니까? (신청 순서대로 1번부터 부여됩니다)',
+              turbo_method: :post
+            } %>
+      </div>
+
+      <!-- 참가자 테이블 -->
+      <div class="overflow-x-auto">
+        <table class="w-full" data-controller="bib-editor" data-bib-editor-race-id-value="<%= @race.id %>">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">등번호</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">참가자명</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">성별</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">연령대</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">신청일</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">상태</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <% edition.registrations.where(status: 'paid').order(:bib_number).each do |reg| %>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4">
+                  <input type="number"
+                         value="<%= reg.bib_number %>"
+                         data-registration-id="<%= reg.id %>"
+                         data-original-value="<%= reg.bib_number %>"
+                         data-action="change->bib-editor#updateBibNumber"
+                         class="w-20 px-3 py-2 border border-gray-300 rounded-lg font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </td>
+                <td class="px-6 py-4 font-bold text-gray-900"><%= reg.user.name %></td>
+                <td class="px-6 py-4 text-gray-600">
+                  <% if reg.user.gender == 'male' %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">남성</span>
+                  <% elsif reg.user.gender == 'female' %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-pink-100 text-pink-800">여성</span>
+                  <% else %>
+                    <span class="text-gray-400">-</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 text-gray-600"><%= reg.user.age_group || '-' %></td>
+                <td class="px-6 py-4 text-sm text-gray-500"><%= reg.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">
+                    <%= reg.status %>
+                  </span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+        <% if edition.registrations.where(status: 'paid').count == 0 %>
+          <div class="p-12 text-center">
+            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <p class="text-gray-500 font-medium">아직 결제 완료된 참가자가 없습니다</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @editions.empty? %>
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-12 text-center">
+      <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+      <p class="text-gray-500 font-medium">등록된 종목이 없습니다</p>
+    </div>
+  <% end %>
+</div>

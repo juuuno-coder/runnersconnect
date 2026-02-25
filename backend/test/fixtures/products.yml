@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  race: one
+  name: MyString
+  description: MyText
+  price: 9.99
+  stock: 1
+  status: MyString
+  size: MyString
+  color: MyString
+
+two:
+  race: two
+  name: MyString
+  description: MyText
+  price: 9.99
+  stock: 1
+  status: MyString
+  size: MyString
+  color: MyString

@@ -1,0 +1,164 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
+  <div class="max-w-7xl mx-auto">
+    <!-- 헤더 -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-black text-gray-900 mb-2">📊 기록 업로드 결과</h1>
+          <p class="text-gray-600"><%= @race.title %></p>
+        </div>
+        <%= link_to organizer_race_records_path(@race), class: "px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all" do %>
+          ← 기록 목록으로
+        <% end %>
+      </div>
+    </div>
+
+    <!-- 통계 카드 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <!-- 성공 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-gray-500 uppercase">신규 등록</h3>
+          <span class="text-3xl">✅</span>
+        </div>
+        <p class="text-4xl font-black text-green-600"><%= @success_records.count %></p>
+        <p class="text-sm text-gray-500 mt-2">건의 기록이 등록되었습니다</p>
+      </div>
+
+      <!-- 업데이트 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-gray-500 uppercase">업데이트</h3>
+          <span class="text-3xl">🔄</span>
+        </div>
+        <p class="text-4xl font-black text-blue-600"><%= @updated_records.count %></p>
+        <p class="text-sm text-gray-500 mt-2">건의 기록이 업데이트되었습니다</p>
+      </div>
+
+      <!-- 실패 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-gray-500 uppercase">실패</h3>
+          <span class="text-3xl">❌</span>
+        </div>
+        <p class="text-4xl font-black text-red-600"><%= @error_records.count %></p>
+        <p class="text-sm text-gray-500 mt-2">건의 오류가 발생했습니다</p>
+      </div>
+    </div>
+
+    <!-- 성공한 기록 -->
+    <% if @success_records.any? %>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <h2 class="text-xl font-black text-gray-900 mb-4 flex items-center">
+          <span class="text-2xl mr-2">✅</span>
+          신규 등록된 기록 (<%= @success_records.count %>건)
+        </h2>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-gray-200">
+                <th class="text-left py-3 px-4 text-sm font-bold text-gray-600">행 번호</th>
+                <th class="text-left py-3 px-4 text-sm font-bold text-gray-600">등번호</th>
+                <th class="text-left py-3 px-4 text-sm font-bold text-gray-600">참가자명</th>
+                <th class="text-left py-3 px-4 text-sm font-bold text-gray-600">완주 시간</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @success_records.each do |record| %>
+                <tr class="border-b border-gray-100 hover:bg-green-50 transition-colors">
+                  <td class="py-3 px-4 text-sm text-gray-600">#<%= record[:line] %></td>
+                  <td class="py-3 px-4 text-sm font-bold text-gray-900"><%= record[:bib_number] %></td>
+                  <td class="py-3 px-4 text-sm text-gray-700"><%= record[:name] %></td>
+                  <td class="py-3 px-4 text-sm font-mono text-blue-600"><%= record[:time] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- 업데이트된 기록 -->
+    <% if @updated_records.any? %>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <h2 class="text-xl font-black text-gray-900 mb-4 flex items-center">
+          <span class="text-2xl mr-2">🔄</span>
+          업데이트된 기록 (<%= @updated_records.count %>건)
+        </h2>
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+          <p class="text-sm text-blue-800">
+            💡 이미 등록된 참가자의 기록이 업데이트되었습니다. 기존 기록은 덮어쓰여집니다.
+          </p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-gray-200">
+                <th class="text-left py-3 px-4 text-sm font-bold text-gray-600">행 번호</th>
+                <th class="text-left py-3 px-4 text-sm font-bold text-gray-600">등번호</th>
+                <th class="text-left py-3 px-4 text-sm font-bold text-gray-600">참가자명</th>
+                <th class="text-left py-3 px-4 text-sm font-bold text-gray-600">완주 시간</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @updated_records.each do |record| %>
+                <tr class="border-b border-gray-100 hover:bg-blue-50 transition-colors">
+                  <td class="py-3 px-4 text-sm text-gray-600">#<%= record[:line] %></td>
+                  <td class="py-3 px-4 text-sm font-bold text-gray-900"><%= record[:bib_number] %></td>
+                  <td class="py-3 px-4 text-sm text-gray-700"><%= record[:name] %></td>
+                  <td class="py-3 px-4 text-sm font-mono text-blue-600"><%= record[:time] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- 실패한 기록 -->
+    <% if @error_records.any? %>
+      <div class="bg-white rounded-2xl shadow-sm border border-red-200 p-6 mb-6">
+        <h2 class="text-xl font-black text-gray-900 mb-4 flex items-center">
+          <span class="text-2xl mr-2">❌</span>
+          오류가 발생한 기록 (<%= @error_records.count %>건)
+        </h2>
+        <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+          <p class="text-sm text-red-800 font-bold mb-2">⚠️ 아래 행들을 수정 후 다시 업로드해주세요</p>
+          <p class="text-sm text-red-700">오류 내용과 해결 방법을 확인하여 CSV 파일을 수정해주세요.</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-gray-200">
+                <th class="text-left py-3 px-4 text-sm font-bold text-gray-600">행 번호</th>
+                <th class="text-left py-3 px-4 text-sm font-bold text-gray-600">등번호</th>
+                <th class="text-left py-3 px-4 text-sm font-bold text-gray-600">오류 내용</th>
+                <th class="text-left py-3 px-4 text-sm font-bold text-gray-600">해결 방법</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @error_records.each do |record| %>
+                <tr class="border-b border-gray-100 hover:bg-red-50 transition-colors">
+                  <td class="py-3 px-4 text-sm text-gray-600">#<%= record[:line] %></td>
+                  <td class="py-3 px-4 text-sm font-bold text-gray-900"><%= record[:bib_number] %></td>
+                  <td class="py-3 px-4 text-sm text-red-700"><%= record[:error] %></td>
+                  <td class="py-3 px-4 text-sm text-blue-600"><%= record[:hint] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- 액션 버튼 -->
+    <div class="flex gap-4 justify-center mt-8">
+      <%= link_to upload_form_organizer_race_records_path(@race), class: "px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl transition-all shadow-lg" do %>
+        📤 다시 업로드하기
+      <% end %>
+      <%= link_to organizer_race_records_path(@race), class: "px-8 py-4 bg-gray-100 hover:bg-gray-200 text-gray-900 font-black rounded-xl transition-all" do %>
+        ← 기록 목록으로
+      <% end %>
+    </div>
+  </div>
+</div>

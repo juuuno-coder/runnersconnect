@@ -1,0 +1,27 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  organizer_profile: one
+  race: one
+  status: MyString
+  registration_count: 1
+  total_revenue: 9.99
+  platform_commission: 9.99
+  organizer_payout: 9.99
+  requested_at: 2026-02-14 08:32:46
+  approved_at: 2026-02-14 08:32:46
+  paid_at: 2026-02-14 08:32:46
+  admin_memo: MyText
+
+two:
+  organizer_profile: two
+  race: two
+  status: MyString
+  registration_count: 1
+  total_revenue: 9.99
+  platform_commission: 9.99
+  organizer_payout: 9.99
+  requested_at: 2026-02-14 08:32:46
+  approved_at: 2026-02-14 08:32:46
+  paid_at: 2026-02-14 08:32:46
+  admin_memo: MyText

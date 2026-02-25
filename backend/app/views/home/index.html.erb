@@ -1,0 +1,191 @@
+<div class="bg-white">
+
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden">
+    <div class="max-w-6xl mx-auto px-6 py-24 lg:py-32">
+      <div class="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
+
+        <!-- Text -->
+        <div class="text-center lg:text-left">
+          <div class="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 text-primary text-sm font-bold mb-8">
+            <span class="w-2 h-2 bg-primary rounded-full mr-2 animate-pulse"></span>
+            2026 시즌 공식 오픈
+          </div>
+
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl tracking-tight font-black text-gray-900 mb-6 leading-[1.15]">
+            당신의 러닝,<br/>
+            <span class="text-primary">더 체계적으로</span>
+          </h1>
+
+          <p class="text-lg text-gray-500 leading-relaxed mb-10 max-w-lg mx-auto lg:mx-0">
+            대회 기록 연동부터 크루 찾기까지, 러닝의 모든 즐거움을 한 곳에서 경험하세요.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <%= link_to races_path, class: "inline-flex items-center justify-center px-8 py-4 text-base font-bold rounded-xl text-white bg-primary hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl" do %>
+              대회 둘러보기
+              <svg class="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H3" /></svg>
+            <% end %>
+            <%= link_to crews_path, class: "inline-flex items-center justify-center px-8 py-4 text-base font-bold rounded-xl text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all" do %>
+              크루 찾기
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Image -->
+        <div class="mt-16 lg:mt-0">
+          <div class="rounded-3xl shadow-2xl overflow-hidden">
+            <img
+              class="w-full h-auto"
+              src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1200&q=80"
+              alt="러너들이 함께 달리는 모습">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="bg-gray-50">
+    <div class="max-w-6xl mx-auto px-6 py-20">
+      <div class="grid grid-cols-3 gap-8 text-center">
+        <div data-controller="scroll-animate" data-scroll-animate-delay-value="0">
+          <div class="text-4xl sm:text-5xl font-black text-primary mb-3"><%= number_with_delimiter(@user_count) %>+</div>
+          <div class="text-sm sm:text-base text-gray-500 font-medium">활동 중인 러너</div>
+        </div>
+        <div data-controller="scroll-animate" data-scroll-animate-delay-value="100">
+          <div class="text-4xl sm:text-5xl font-black text-primary mb-3"><%= @race_count %></div>
+          <div class="text-sm sm:text-base text-gray-500 font-medium">등록된 대회</div>
+        </div>
+        <div data-controller="scroll-animate" data-scroll-animate-delay-value="200">
+          <div class="text-4xl sm:text-5xl font-black text-primary mb-3"><%= @crew_count %></div>
+          <div class="text-sm sm:text-base text-gray-500 font-medium">활성 크루</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="bg-white">
+    <div class="max-w-6xl mx-auto px-6 py-28">
+      <div class="text-center mb-16" data-controller="scroll-animate">
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-5">
+          더 스마트한 러닝 라이프
+        </h2>
+        <p class="text-lg text-gray-500 max-w-xl mx-auto leading-relaxed">
+          기록 관리부터 커뮤니티 활동까지, 러너에게 필요한 모든 기능을 담았습니다.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <% [
+          {
+            image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80",
+            title: "공식 기록 자동 연동",
+            desc: "대회 주최측과 연동되어 당신의 공식 기록이 자동으로 프로필에 저장됩니다."
+          },
+          {
+            image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=800&q=80",
+            title: "명예의 전당",
+            desc: "나만의 뱃지를 수집하고, 랭킹 시스템을 통해 자신의 위치를 확인해보세요."
+          },
+          {
+            image: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=800&q=80",
+            title: "크루 시스템",
+            desc: "지역 기반, 목표 기반의 다양한 크루를 찾고 함께 달리는 즐거움을 느껴보세요."
+          }
+        ].each_with_index do |feature, i| %>
+          <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all border border-gray-200" data-controller="scroll-animate" data-scroll-animate-delay-value="<%= i * 100 %>">
+            <div class="aspect-[16/10] overflow-hidden relative">
+              <img
+                src="<%= feature[:image] %>"
+                alt="<%= feature[:title] %>"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                loading="lazy">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+            </div>
+            <div class="px-7 py-8">
+              <h3 class="text-lg font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors">
+                <%= feature[:title] %>
+              </h3>
+              <p class="text-sm text-gray-500 leading-relaxed">
+                <%= feature[:desc] %>
+              </p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0">
+      <img
+        src="https://images.unsplash.com/photo-1483721310020-03333e577078?auto=format&fit=crop&w=2000&q=80"
+        alt=""
+        class="w-full h-full object-cover"
+        loading="lazy">
+      <div class="absolute inset-0 bg-gray-900/80"></div>
+    </div>
+
+    <div class="relative max-w-6xl mx-auto text-center px-6 py-28 lg:py-36" data-controller="scroll-animate">
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-8 leading-tight">
+        준비되셨나요?<br/>
+        지금 바로 무료로 시작하세요.
+      </h2>
+      <p class="text-lg text-gray-300 mb-12 max-w-xl mx-auto leading-relaxed">
+        복잡한 가입 절차 없이, 카카오 계정으로 3초 만에 시작할 수 있습니다.
+      </p>
+      <%= link_to new_user_registration_path, class: "inline-flex items-center justify-center px-10 py-4 text-lg font-bold rounded-xl text-gray-900 bg-white hover:bg-gray-100 transition-all shadow-2xl" do %>
+        무료로 가입하기
+        <svg class="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H3" />
+        </svg>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="bg-gray-50">
+    <div class="max-w-6xl mx-auto px-6 py-28">
+      <div class="text-center mb-14" data-controller="scroll-animate">
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-5">
+          자주 묻는 질문
+        </h2>
+        <p class="text-lg text-gray-500 max-w-xl mx-auto leading-relaxed">
+          궁금한 점이 있으신가요? 아래에서 빠르게 답을 찾아보세요.
+        </p>
+      </div>
+
+      <div class="max-w-3xl mx-auto">
+        <div data-controller="ui--accordion" class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm divide-y divide-gray-100">
+          <% [
+            { id: "faq-1", q: "기록 연동은 어떻게 하나요?", a: "마이페이지에서 대회 참가 번호를 입력하면 자동으로 공식 기록이 연동됩니다." },
+            { id: "faq-2", q: "비용이 드나요?", a: "기본적인 서비스 이용은 모두 무료입니다. 일부 프리미엄 대회 참가 시에만 비용이 발생할 수 있습니다." },
+            { id: "faq-3", q: "크루는 어떻게 만드나요?", a: "마이페이지에서 크루 생성 버튼을 클릭하면 고유 코드가 발급됩니다. 이 코드를 멤버들에게 공유하세요." },
+            { id: "faq-4", q: "환불은 어떻게 하나요?", a: "대회 접수 마감일 전까지 마이페이지에서 환불 신청이 가능합니다. 마감일 이후에는 환불이 불가합니다." }
+          ].each do |faq| %>
+            <div>
+              <h3 class="flex">
+                <a href="#<%= faq[:id] %>"
+                   data-action="ui--accordion#toggle"
+                   class="flex flex-1 items-center justify-between px-8 py-6 text-base font-bold text-gray-900 hover:text-blue-600 transition-colors cursor-pointer [&[data-state=open]>svg]:rotate-180">
+                  <%= faq[:q] %>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 shrink-0 text-gray-400 transition-transform duration-200 ml-4">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </a>
+              </h3>
+              <div data-accordion-id="<%= faq[:id] %>" class="overflow-hidden transition-all duration-200" style="height: 0px;">
+                <div class="px-8 pb-6 pt-0 text-gray-500 leading-relaxed"><%= faq[:a] %></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

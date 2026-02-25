@@ -1,0 +1,143 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- 주문 완료 메시지 -->
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-200 p-12 text-center mb-8">
+      <div class="text-6xl mb-6">🎉</div>
+      <h1 class="text-4xl font-black text-gray-900 mb-4">주문이 완료되었습니다!</h1>
+      <p class="text-lg text-gray-600 mb-8">
+        주문번호: <span class="font-bold text-blue-600"><%= @order.order_number %></span>
+      </p>
+
+      <!-- 상태 -->
+      <div class="inline-flex items-center px-6 py-3 bg-blue-100 text-blue-800 font-bold rounded-full text-lg">
+        <%= case @order.status
+            when 'pending' then '⏳ 결제 대기'
+            when 'paid' then '✅ 결제 완료'
+            when 'shipped' then '🚚 배송 중'
+            when 'delivered' then '📦 배송 완료'
+            when 'cancelled' then '❌ 취소됨'
+            end %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- 왼쪽: 주문 상세 -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- 주문 상품 -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+          <h2 class="text-2xl font-black text-gray-900 mb-6">📋 주문 상품</h2>
+
+          <div class="space-y-4">
+            <% @order_items.each do |item| %>
+              <div class="flex gap-4 pb-4 border-b border-gray-100 last:border-0">
+                <!-- 상품 이미지 -->
+                <div class="w-24 h-24 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl overflow-hidden flex-shrink-0">
+                  <% if item.product.images.attached? %>
+                    <%= image_tag item.product.images.first, class: "w-full h-full object-cover" %>
+                  <% else %>
+                    <div class="w-full h-full flex items-center justify-center">
+                      <div class="text-3xl">🎽</div>
+                    </div>
+                  <% end %>
+                </div>
+
+                <!-- 상품 정보 -->
+                <div class="flex-1">
+                  <%= link_to product_path(item.product), class: "hover:text-blue-600 transition-colors" do %>
+                    <h3 class="text-lg font-black text-gray-900 mb-1"><%= item.product.name %></h3>
+                  <% end %>
+                  <p class="text-sm text-gray-500 mb-2"><%= item.product.race.title %></p>
+                  <div class="flex items-center gap-2">
+                    <% if item.product.size.present? %>
+                      <span class="text-xs px-2 py-1 bg-gray-100 rounded-lg font-bold text-gray-700">
+                        <%= item.product.size %>
+                      </span>
+                    <% end %>
+                    <% if item.product.color.present? %>
+                      <span class="text-xs px-2 py-1 bg-gray-100 rounded-lg font-bold text-gray-700">
+                        <%= item.product.color %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+
+                <!-- 수량 및 가격 -->
+                <div class="text-right">
+                  <p class="text-sm text-gray-500 mb-1">
+                    <%= number_to_currency(item.unit_price, precision: 0) %> × <%= item.quantity %>
+                  </p>
+                  <p class="text-xl font-black text-blue-600">
+                    <%= number_to_currency(item.subtotal, precision: 0) %>
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- 배송지 정보 -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+          <h2 class="text-2xl font-black text-gray-900 mb-6">📦 배송지 정보</h2>
+
+          <div class="space-y-3">
+            <div class="flex items-start gap-3">
+              <span class="text-gray-500 font-bold w-20 flex-shrink-0">주소</span>
+              <span class="text-gray-900"><%= @order.shipping_address %></span>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="text-gray-500 font-bold w-20 flex-shrink-0">연락처</span>
+              <span class="text-gray-900"><%= @order.shipping_phone %></span>
+            </div>
+            <% if @order.tracking_number.present? %>
+              <div class="flex items-start gap-3">
+                <span class="text-gray-500 font-bold w-20 flex-shrink-0">운송장</span>
+                <span class="text-blue-600 font-bold"><%= @order.tracking_number %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- 오른쪽: 결제 정보 -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 sticky top-24">
+          <h3 class="text-xl font-black text-gray-900 mb-6">💰 결제 정보</h3>
+
+          <!-- 주문 일시 -->
+          <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-100">
+            <span class="text-sm font-bold text-gray-600">주문 일시</span>
+            <span class="text-sm font-bold text-gray-900">
+              <%= @order.created_at.strftime('%Y.%m.%d %H:%M') %>
+            </span>
+          </div>
+
+          <!-- 상품 금액 -->
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-sm font-bold text-gray-600">상품 금액</span>
+            <span class="font-bold text-gray-900">
+              <%= number_to_currency(@order.total_amount, precision: 0) %>
+            </span>
+          </div>
+
+          <!-- 배송비 -->
+          <div class="flex justify-between items-center mb-6 pb-6 border-b border-gray-200">
+            <span class="text-sm font-bold text-gray-600">배송비</span>
+            <span class="font-bold text-green-600">무료</span>
+          </div>
+
+          <!-- 총 결제 금액 -->
+          <div class="flex justify-between items-center mb-8 p-4 bg-blue-50 rounded-xl">
+            <span class="text-lg font-black text-gray-900">총 결제 금액</span>
+            <span class="text-3xl font-black text-blue-600">
+              <%= number_to_currency(@order.total_amount, precision: 0) %>
+            </span>
+          </div>
+
+          <!-- 버튼 -->
+          <%= link_to "주문 내역", orders_path, class: "block w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl transition-all text-center mb-3" %>
+          <%= link_to "쇼핑 계속하기", races_path, class: "block w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold rounded-xl transition-all text-center" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

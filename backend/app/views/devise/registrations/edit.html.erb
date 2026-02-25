@@ -1,0 +1,64 @@
+<div class="min-h-[calc(100vh-73px)] flex flex-col items-center justify-center p-6 sm:p-12">
+  <div class="max-w-md w-full">
+    <div class="text-center mb-10">
+      <h2 class="text-4xl font-black text-gray-900 tracking-tighter mb-2">계정 설정</h2>
+      <p class="text-gray-500 font-medium">비밀번호를 변경하거나 계정을 관리하세요.</p>
+    </div>
+
+    <div class="bg-white rounded-[2.5rem] shadow-xl shadow-blue-50 border border-gray-100 p-8 sm:p-10">
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "space-y-6" }) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <div>
+          <%= f.label :email, "이메일", class: "block text-sm font-bold text-gray-700 mb-2" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "block w-full px-5 py-4 rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all bg-gray-50", readonly: true %>
+          <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+            <p class="text-xs text-amber-600 font-medium mt-2">확인 대기중: <%= resource.unconfirmed_email %></p>
+          <% end %>
+        </div>
+
+        <div class="pt-4 border-t border-gray-100">
+          <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">비밀번호 변경</p>
+          <p class="text-xs text-gray-400 mb-4">변경하지 않으려면 비워두세요.</p>
+
+          <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <%= f.label :password, "새 비밀번호", class: "block text-sm font-bold text-gray-700 mb-2" %>
+                <%= f.password_field :password, autocomplete: "new-password", placeholder: "6자 이상", class: "block w-full px-5 py-4 rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all text-sm" %>
+              </div>
+              <div>
+                <%= f.label :password_confirmation, "비밀번호 확인", class: "block text-sm font-bold text-gray-700 mb-2" %>
+                <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "한 번 더", class: "block w-full px-5 py-4 rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all text-sm" %>
+              </div>
+            </div>
+
+            <div>
+              <%= f.label :current_password, "현재 비밀번호", class: "block text-sm font-bold text-gray-700 mb-2" %>
+              <%= f.password_field :current_password, autocomplete: "current-password", placeholder: "변경사항 확인용", class: "block w-full px-5 py-4 rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all" %>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4">
+          <%= f.submit "저장하기", class: "w-full py-5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl shadow-xl shadow-blue-100 transition-all active:scale-[0.98] text-lg cursor-pointer" %>
+        </div>
+      <% end %>
+
+      <div class="mt-8 pt-8 border-t border-gray-50">
+        <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">위험 구역</p>
+        <div class="bg-red-50 rounded-2xl p-6 border border-red-100">
+          <p class="text-sm text-gray-600 font-medium mb-4">계정을 삭제하면 모든 데이터가 영구적으로 제거됩니다.</p>
+          <%= button_to "계정 삭제", registration_path(resource_name),
+              method: :delete,
+              data: { turbo_confirm: "정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다." },
+              class: "w-full py-3 bg-white hover:bg-red-600 hover:text-white text-red-600 font-black rounded-xl border border-red-200 transition-all text-sm cursor-pointer" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 text-center">
+      <%= link_to "← 돌아가기", :back, class: "text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors" %>
+    </div>
+  </div>
+</div>

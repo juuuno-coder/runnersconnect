@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .content { background: #fff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }
+    .alert-box { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px; }
+    .amount { font-size: 32px; font-weight: bold; color: #d97706; margin: 10px 0; }
+    .details { background: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0; }
+    .details-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+    .details-row:last-child { border-bottom: none; }
+    .label { font-weight: 600; color: #6b7280; }
+    .value { color: #111827; }
+    .button { display: inline-block; background: #4f46e5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+    .button-approve { background: #10b981; }
+    .button-reject { background: #ef4444; margin-left: 10px; }
+    .footer { text-align: center; color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>⚠️ 새로운 정산 요청</h1>
+  </div>
+
+  <div class="content">
+    <p><strong>Admin</strong> 님, 안녕하세요.</p>
+
+    <p>새로운 정산 요청이 접수되었습니다. 검토 후 승인 또는 거부 처리를 진행해주세요.</p>
+
+    <div class="alert-box">
+      <div style="font-size: 14px; color: #b45309; font-weight: 600; margin-bottom: 5px;">정산 요청 금액</div>
+      <div class="amount"><%= number_to_currency(@settlement.organizer_payout, precision: 0) %></div>
+    </div>
+
+    <div class="details">
+      <h3 style="margin-top: 0; color: #111827;">주최자 정보</h3>
+
+      <div class="details-row">
+        <span class="label">사업자명</span>
+        <span class="value"><strong><%= @organizer.business_name %></strong></span>
+      </div>
+
+      <div class="details-row">
+        <span class="label">담당자 이메일</span>
+        <span class="value"><%= @organizer.contact_email %></span>
+      </div>
+
+      <div class="details-row">
+        <span class="label">담당자 연락처</span>
+        <span class="value"><%= @organizer.contact_phone %></span>
+      </div>
+    </div>
+
+    <div class="details">
+      <h3 style="margin-top: 0; color: #111827;">대회 정보</h3>
+
+      <div class="details-row">
+        <span class="label">대회명</span>
+        <span class="value"><strong><%= @race.title %></strong></span>
+      </div>
+
+      <div class="details-row">
+        <span class="label">개최일</span>
+        <span class="value"><%= @race.start_at.strftime('%Y년 %m월 %d일') %></span>
+      </div>
+
+      <div class="details-row">
+        <span class="label">참가자 수</span>
+        <span class="value"><%= @settlement.registration_count %>명</span>
+      </div>
+    </div>
+
+    <div class="details">
+      <h3 style="margin-top: 0; color: #111827;">정산 내역</h3>
+
+      <div class="details-row">
+        <span class="label">총 매출</span>
+        <span class="value"><%= number_to_currency(@settlement.total_revenue, precision: 0) %></span>
+      </div>
+
+      <div class="details-row">
+        <span class="label">플랫폼 수수료 (5% + 500원/명)</span>
+        <span class="value" style="color: #059669;"><%= number_to_currency(@settlement.platform_commission, precision: 0) %></span>
+      </div>
+
+      <div class="details-row" style="font-weight: bold; background: #fffbeb; margin: 10px -15px -15px; padding: 12px 15px;">
+        <span class="label" style="color: #d97706;">주최자 정산 금액</span>
+        <span class="value" style="color: #d97706; font-size: 18px;"><%= number_to_currency(@settlement.organizer_payout, precision: 0) %></span>
+      </div>
+    </div>
+
+    <div style="background: #eff6ff; padding: 15px; border-radius: 8px; margin: 20px 0;">
+      <h4 style="margin: 0 0 10px 0; color: #1e40af;">입금 계좌 정보</h4>
+      <p style="margin: 5px 0;"><strong><%= @organizer.bank_name %></strong></p>
+      <p style="margin: 5px 0;"><%= @organizer.bank_account %></p>
+      <p style="margin: 5px 0; color: #6b7280;">예금주: <%= @organizer.account_holder %></p>
+    </div>
+
+    <div style="background: #fef2f2; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ef4444;">
+      <p style="margin: 0; font-size: 14px;">
+        ⏰ <strong>처리 기한</strong><br>
+        정산 요청일로부터 3-5 영업일 이내 처리를 권장합니다.<br>
+        요청일: <%= @settlement.requested_at.strftime('%Y년 %m월 %d일 %H:%M') %>
+      </p>
+    </div>
+
+    <div style="text-align: center;">
+      <a href="<%= admin_settlements_url %>" class="button button-approve">정산 관리 페이지로 이동</a>
+    </div>
+
+    <p style="color: #6b7280; font-size: 14px; margin-top: 30px; text-align: center;">
+      정산 관리 페이지에서 승인 또는 거부 처리를 진행해주세요.
+    </p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Runner's Connect Admin</strong></p>
+    <p>대회 운영의 모든 것, 러너스커넥트</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<div class="space-y-6">
+  <!-- 페이지 헤더 -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-black text-gray-900"><%= @race.title %> - 참가 기록</h1>
+      <p class="text-gray-500 font-medium mt-2">완주 기록을 관리하고 일괄 업로드할 수 있습니다</p>
+    </div>
+    <div class="flex gap-3">
+      <%= link_to "← 대회 상세", organizer_race_path(@race), class: "text-sm font-bold text-gray-600 hover:text-gray-900" %>
+      <%= link_to "📊 통계 대시보드", organizer_race_record_statistics_path(@race), class: "px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors text-sm" %>
+      <%= link_to "📤 기록 업로드", upload_form_organizer_race_records_path(@race), class: "px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition-colors text-sm" %>
+    </div>
+  </div>
+
+  <!-- 통계 -->
+  <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">완주율</h3>
+        <p class="text-4xl font-black text-gray-900">
+          <%= @completion_rate %>%
+          <span class="text-xl text-gray-400 ml-2">
+            (<%= @records.count %> / <%= @race.registrations.where(status: 'paid').count %>명)
+          </span>
+        </p>
+      </div>
+      <div class="w-24 h-24 bg-green-100 rounded-xl flex items-center justify-center">
+        <svg class="w-12 h-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 기록 테이블 -->
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+      <h2 class="text-lg font-black text-gray-900">완주 기록</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">순위</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">등번호</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">참가자명</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">종목</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">완주 시간</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">페이스</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <% @records.each_with_index do |record, index| %>
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center justify-center w-10 h-10 <%= index < 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800' %> font-black rounded-lg">
+                  <%= index + 1 %>
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center justify-center w-10 h-10 bg-indigo-100 text-indigo-800 font-black rounded-lg">
+                  <%= record.registration.bib_number %>
+                </span>
+              </td>
+              <td class="px-6 py-4 font-bold text-gray-900"><%= record.user.name %></td>
+              <td class="px-6 py-4 font-medium text-gray-600">
+                <%= record.race_edition.name %>
+                <span class="text-sm text-gray-400">(<%= record.race_edition.distance %>km)</span>
+              </td>
+              <td class="px-6 py-4">
+                <span class="text-lg font-black text-indigo-600"><%= record.net_time %></span>
+              </td>
+              <td class="px-6 py-4 font-medium text-gray-600">
+                <% if record.net_time.present? && record.race_edition.distance > 0 %>
+                  <% time_parts = record.net_time.split(':').map(&:to_i) %>
+                  <% total_seconds = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2] %>
+                  <% pace_seconds = total_seconds / record.race_edition.distance %>
+                  <% pace_minutes = pace_seconds / 60 %>
+                  <% pace_secs = pace_seconds % 60 %>
+                  <%= "#{pace_minutes}:#{format('%02d', pace_secs)}/km" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <% if @records.empty? %>
+        <div class="p-12 text-center">
+          <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          </svg>
+          <p class="text-gray-500 font-medium mb-4">아직 기록이 없습니다</p>
+          <%= link_to "기록 업로드하기", upload_form_organizer_race_records_path(@race), class: "inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition-colors" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

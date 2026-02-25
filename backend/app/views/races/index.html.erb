@@ -1,0 +1,98 @@
+<div class="max-w-6xl mx-auto px-6 py-16">
+  <% content_for :header_actions do %>
+    <div class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+      <%= form_with url: races_path, method: :get, local: true, class: "flex flex-col md:flex-row items-center gap-3 w-full md:w-auto" do |f| %>
+        <div class="relative group w-full md:w-auto">
+          <svg class="h-4 w-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 group-focus-within:text-blue-500 transition-colors z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <%= render_input name: :query, value: params[:query], placeholder: "대회명...", class: "pl-10 h-10 w-full md:w-56 bg-white border-gray-200 rounded-xl font-bold text-sm focus:ring-2 focus:ring-blue-500 transition-shadow" %>
+        </div>
+        
+        <div class="w-full md:w-auto">
+          <%= render_select name: :location, class: "h-10 w-full md:w-auto border-gray-200 rounded-xl font-bold bg-white px-3 text-sm focus:ring-2 focus:ring-blue-500 transition-shadow" do |s| %>
+            <% ['전체 지역', '서울', '경기', '부산', '대구', '인천', '광주', '대전'].each do |loc| %>
+              <%= s.option value: loc, label: loc %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <%= render_button type: :submit, class: "h-10 w-full md:w-auto px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-50 transition-all border-none flex items-center justify-center font-bold" do %>
+          검색
+          <svg class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <% end %>
+      <% end %>
+
+      <% if params[:query].present? || (params[:location].present? && params[:location] != '전체 지역') %>
+        <%= link_to races_path, class: "text-xs font-bold text-gray-400 hover:text-red-500" do %>
+          필터 초기화
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= render 'shared/page_header', 
+      title: "참가 가능한 대회", 
+      icon: "🏃‍♂️", 
+      description: "전국의 다양한 마라톤 대회를 확인하고 도전하세요." %>
+
+  <% if @races.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+      <% @races.each do |race| %>
+        <%= link_to race_path(race), class: "group block" do %>
+          <div class="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all h-full flex flex-col">
+            <!-- Image -->
+            <div class="aspect-[16/10] relative overflow-hidden bg-gray-100">
+              <% if race.thumbnail_url.present? %>
+                <img src="<%= race.thumbnail_url %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="<%= race.title %>" loading="lazy" />
+              <% else %>
+                <img src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Running Race" loading="lazy" />
+              <% end %>
+
+              <div class="absolute top-4 right-4">
+                <% if race.registration_open? %>
+                  <span class="bg-primary text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow-lg">
+                    접수중
+                  </span>
+                <% else %>
+                  <span class="bg-gray-900 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow-lg">
+                    <%= race.status.upcase %>
+                  </span>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 flex-1 flex flex-col">
+              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors">
+                <%= race.title %>
+              </h3>
+
+              <p class="text-gray-600 text-sm line-clamp-2 mb-4 leading-relaxed">
+                <%= race.description %>
+              </p>
+
+              <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between text-sm">
+                <div class="flex items-center text-gray-600">
+                  <svg class="h-4 w-4 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <%= race.location %>
+                </div>
+                <div class="text-gray-500">
+                  <%= race.start_at.strftime("%Y.%m.%d") %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="py-24 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200 mt-8">
+      <p class="text-gray-400 font-bold mb-4">검색 결과가 없습니다.</p>
+      <%= link_to "전체 보기", races_path, class: "text-blue-600 font-bold text-sm underline underline-offset-4" %>
+    </div>
+  <% end %>
+</div>

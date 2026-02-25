@@ -1,0 +1,195 @@
+<div class="space-y-6">
+  <!-- 페이지 헤더 -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-black text-gray-900"><%= @race.title %> - 결제 현황</h1>
+      <p class="text-gray-500 font-medium mt-2">참가비 결제 및 수익 통계를 확인할 수 있습니다</p>
+    </div>
+    <%= link_to "← 대회 상세", organizer_race_path(@race), class: "text-sm font-bold text-gray-600 hover:text-gray-900" %>
+  </div>
+
+  <!-- 총 수익 통계 -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <!-- 총 수익 -->
+    <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl p-6 shadow-lg text-white col-span-2">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+      <h2 class="text-sm font-bold uppercase tracking-wider mb-2 text-indigo-100">총 수익</h2>
+      <p class="text-5xl font-black mb-2"><%= number_to_currency(@total_revenue, unit: '₩', precision: 0, delimiter: ',') %></p>
+      <small class="text-indigo-100">결제 완료: <%= @paid_count %>건</small>
+    </div>
+
+    <!-- 결제 대기 -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+      <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">결제 대기</h3>
+      <p class="text-4xl font-black text-gray-900"><%= @pending_count %><span class="text-xl text-gray-400 ml-1">건</span></p>
+    </div>
+
+    <!-- 환불 완료 -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
+          </svg>
+        </div>
+      </div>
+      <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">환불 완료</h3>
+      <p class="text-4xl font-black text-gray-900"><%= @refunded_count %><span class="text-xl text-gray-400 ml-1">건</span></p>
+    </div>
+  </div>
+
+  <!-- 종목별 수익 -->
+  <section class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+      <h2 class="text-lg font-black text-gray-900">종목별 수익</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">종목</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">참가비</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">참가자 수</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">총 수익</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <% @revenue_by_edition.each do |edition, data| %>
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex flex-col">
+                  <span class="font-bold text-gray-900"><%= edition.name %></span>
+                  <span class="text-sm text-gray-500"><%= edition.distance %>km</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 font-medium text-gray-600">
+                <%= number_to_currency(edition.price, unit: '₩', precision: 0, delimiter: ',') %>
+              </td>
+              <td class="px-6 py-4 font-bold text-gray-900"><%= data[:count] %>명</td>
+              <td class="px-6 py-4">
+                <span class="text-lg font-black text-indigo-600">
+                  <%= number_to_currency(data[:revenue], unit: '₩', precision: 0, delimiter: ',') %>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot class="bg-gray-50 border-t-2 border-gray-300">
+          <tr>
+            <th colspan="3" class="px-6 py-4 text-left text-sm font-black text-gray-900 uppercase">합계</th>
+            <th class="px-6 py-4 text-left">
+              <span class="text-xl font-black text-indigo-600">
+                <%= number_to_currency(@total_revenue, unit: '₩', precision: 0, delimiter: ',') %>
+              </span>
+            </th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- 일별 신청 추이 -->
+  <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <h2 class="text-lg font-black text-gray-900 mb-4">일별 신청 추이 (최근 30일)</h2>
+    <div class="h-64 flex items-center justify-center">
+      <% if @registrations_by_date.any? %>
+        <div class="w-full">
+          <div class="bg-gray-50 rounded-lg p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-bold text-gray-600">날짜별 신청 건수</span>
+            </div>
+            <div class="space-y-2">
+              <% @registrations_by_date.sort.last(7).each do |date, count| %>
+                <div class="flex items-center gap-3">
+                  <span class="text-sm font-medium text-gray-600 w-24"><%= date %></span>
+                  <div class="flex-1 bg-gray-200 rounded-full h-6 overflow-hidden">
+                    <div class="bg-indigo-500 h-full rounded-full transition-all duration-300 flex items-center justify-end pr-2"
+                         style="width: <%= [@registrations_by_date.values.max > 0 ? (count.to_f / @registrations_by_date.values.max * 100).round : 0, 5].max %>%">
+                      <span class="text-xs font-bold text-white"><%= count %>건</span>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <p class="text-gray-400 font-medium">아직 데이터가 없습니다</p>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- 최근 결제 내역 -->
+  <section class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+      <h2 class="text-lg font-black text-gray-900">최근 결제 내역</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">결제일시</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">참가자</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">종목</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">금액</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">상태</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <% @recent_payments.each do |reg| %>
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 font-medium text-gray-600">
+                <%= reg.created_at.strftime('%Y-%m-%d %H:%M') %>
+              </td>
+              <td class="px-6 py-4 font-bold text-gray-900"><%= reg.user.name %></td>
+              <td class="px-6 py-4 font-medium text-gray-600"><%= reg.race_edition.name %></td>
+              <td class="px-6 py-4">
+                <span class="font-black text-indigo-600">
+                  <%= number_to_currency(reg.payment_amount, unit: '₩', precision: 0, delimiter: ',') %>
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold
+                  <%= case reg.status
+                      when 'paid' then 'bg-green-100 text-green-800'
+                      when 'pending' then 'bg-yellow-100 text-yellow-800'
+                      when 'refunded' then 'bg-red-100 text-red-800'
+                      else 'bg-gray-100 text-gray-800'
+                      end %>">
+                  <%= case reg.status
+                      when 'paid' then '✓ 결제완료'
+                      when 'pending' then '⏳ 대기중'
+                      when 'refunded' then '↩ 환불완료'
+                      else reg.status
+                      end %>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <% if @recent_payments.empty? %>
+        <div class="p-12 text-center">
+          <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          <p class="text-gray-500 font-medium">결제 내역이 없습니다</p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

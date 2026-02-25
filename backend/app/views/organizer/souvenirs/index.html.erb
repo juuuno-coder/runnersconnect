@@ -1,0 +1,163 @@
+<div class="space-y-6" data-controller="souvenir-checker" data-souvenir-checker-race-id-value="<%= @race.id %>" data-souvenir-checker-current-user-name-value="<%= current_user.name %>">
+  <!-- 페이지 헤더 -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-black text-gray-900"><%= @race.title %> - 기념품 수령 현황</h1>
+      <p class="text-gray-500 font-medium mt-2">참가자별 기념품 및 메달 수령 여부를 관리할 수 있습니다</p>
+    </div>
+    <%= link_to "← 대회 상세", organizer_race_path(@race), class: "text-sm font-bold text-gray-600 hover:text-gray-900" %>
+  </div>
+
+  <!-- 통계 카드 -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- 총 참가자 -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        </div>
+      </div>
+      <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">총 참가자</h3>
+      <p class="text-4xl font-black text-gray-900"><%= @total_count %><span class="text-xl text-gray-400 ml-1">명</span></p>
+    </div>
+
+    <!-- 기념품 수령 -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+          </svg>
+        </div>
+      </div>
+      <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">기념품 수령</h3>
+      <p class="text-4xl font-black text-gray-900"><%= @souvenir_received_count %> <span class="text-2xl text-gray-400">/ <%= @total_count %></span></p>
+      <div class="mt-3 bg-gray-200 rounded-full h-2 overflow-hidden">
+        <div class="bg-green-500 h-full rounded-full transition-all duration-500" style="width: <%= @total_count > 0 ? (@souvenir_received_count.to_f / @total_count * 100).round : 0 %>%"></div>
+      </div>
+      <p class="text-sm text-gray-500 mt-2"><%= @total_count > 0 ? (@souvenir_received_count.to_f / @total_count * 100).round : 0 %>% 완료</p>
+    </div>
+
+    <!-- 메달 수령 -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+          </svg>
+        </div>
+      </div>
+      <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">메달 수령</h3>
+      <p class="text-4xl font-black text-gray-900"><%= @medal_received_count %> <span class="text-2xl text-gray-400">/ <%= @total_count %></span></p>
+      <div class="mt-3 bg-gray-200 rounded-full h-2 overflow-hidden">
+        <div class="bg-yellow-500 h-full rounded-full transition-all duration-500" style="width: <%= @total_count > 0 ? (@medal_received_count.to_f / @total_count * 100).round : 0 %>%"></div>
+      </div>
+      <p class="text-sm text-gray-500 mt-2"><%= @total_count > 0 ? (@medal_received_count.to_f / @total_count * 100).round : 0 %>% 완료</p>
+    </div>
+  </div>
+
+  <!-- 필터 버튼 -->
+  <div class="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
+    <div class="flex flex-wrap gap-2">
+      <%= link_to '전체', organizer_race_souvenirs_path(@race), class: "px-4 py-2 rounded-lg font-bold text-sm transition-colors #{params[:filter].nil? ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+      <%= link_to '기념품 미수령', organizer_race_souvenirs_path(@race, filter: 'souvenir_pending'), class: "px-4 py-2 rounded-lg font-bold text-sm transition-colors #{params[:filter] == 'souvenir_pending' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+      <%= link_to '기념품 수령완료', organizer_race_souvenirs_path(@race, filter: 'souvenir_received'), class: "px-4 py-2 rounded-lg font-bold text-sm transition-colors #{params[:filter] == 'souvenir_received' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+      <%= link_to '메달 미수령', organizer_race_souvenirs_path(@race, filter: 'medal_pending'), class: "px-4 py-2 rounded-lg font-bold text-sm transition-colors #{params[:filter] == 'medal_pending' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+      <%= link_to '메달 수령완료', organizer_race_souvenirs_path(@race, filter: 'medal_received'), class: "px-4 py-2 rounded-lg font-bold text-sm transition-colors #{params[:filter] == 'medal_received' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+    </div>
+  </div>
+
+  <!-- 수령 현황 테이블 -->
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">등번호</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">참가자명</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">종목</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">기념품 수령</th>
+            <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">메달 수령</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <% @registrations.each do |reg| %>
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center justify-center w-10 h-10 bg-indigo-100 text-indigo-800 font-black rounded-lg">
+                  <%= reg.bib_number %>
+                </span>
+              </td>
+              <td class="px-6 py-4 font-bold text-gray-900"><%= reg.user.name %></td>
+              <td class="px-6 py-4 font-medium text-gray-600"><%= reg.race_edition.name %></td>
+              <td class="px-6 py-4">
+                <% if reg.souvenir_received_at.present? %>
+                  <div class="flex flex-col gap-1">
+                    <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-green-100 text-green-800">
+                      ✓ 수령완료
+                    </span>
+                    <span class="text-xs text-gray-500">
+                      <%= reg.souvenir_received_at.strftime('%m/%d %H:%M') %> (<%= reg.souvenir_received_by %>)
+                    </span>
+                  </div>
+                <% else %>
+                  <button type="button"
+                          class="px-4 py-2 bg-white hover:bg-gray-50 border-2 border-gray-300 hover:border-indigo-500 text-gray-700 hover:text-indigo-600 font-bold rounded-lg transition-all text-sm"
+                          data-action="click->souvenir-checker#markReceived"
+                          data-registration-id="<%= reg.id %>"
+                          data-type="souvenir">
+                    수령 체크
+                  </button>
+                <% end %>
+              </td>
+              <td class="px-6 py-4">
+                <% if reg.medal_received_at.present? %>
+                  <div class="flex flex-col gap-1">
+                    <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-yellow-100 text-yellow-800">
+                      ✓ 수령완료
+                    </span>
+                    <span class="text-xs text-gray-500">
+                      <%= reg.medal_received_at.strftime('%m/%d %H:%M') %> (<%= reg.medal_received_by %>)
+                    </span>
+                  </div>
+                <% else %>
+                  <button type="button"
+                          class="px-4 py-2 bg-white hover:bg-gray-50 border-2 border-gray-300 hover:border-yellow-500 text-gray-700 hover:text-yellow-600 font-bold rounded-lg transition-all text-sm"
+                          data-action="click->souvenir-checker#markReceived"
+                          data-registration-id="<%= reg.id %>"
+                          data-type="medal">
+                    수령 체크
+                  </button>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <% if @registrations.empty? %>
+        <div class="p-12 text-center">
+          <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+          </svg>
+          <p class="text-gray-500 font-medium">
+            <% if params[:filter].present? %>
+              해당 조건에 맞는 참가자가 없습니다
+            <% else %>
+              아직 참가자가 없습니다
+            <% end %>
+          </p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 페이지네이션 -->
+    <% if @registrations.any? %>
+      <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <%= paginate @registrations, theme: 'twitter-bootstrap-4' %>
+      </div>
+    <% end %>
+  </div>
+</div>

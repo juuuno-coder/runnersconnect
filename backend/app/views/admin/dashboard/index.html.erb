@@ -1,0 +1,111 @@
+<div class="max-w-6xl mx-auto px-6 py-16">
+  <div class="flex items-center justify-between mb-12">
+    <div>
+      <h1 class="text-4xl font-black text-gray-900 tracking-tighter">Admin Overview</h1>
+      <p class="text-gray-500 font-medium">관리자 전용 대시보드입니다.</p>
+    </div>
+    <div class="flex space-x-4">
+      <button class="px-6 py-3 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all text-sm">리포트 다운로드</button>
+      <%= link_to "새 대회 등록", new_admin_race_path, class: "px-6 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all text-sm" %>
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+      <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-2">Total Sales</p>
+      <h3 class="text-3xl font-black text-gray-900"><%= number_to_currency(@total_sales, unit: '₩', precision: 0) %></h3>
+      <div class="mt-4 flex items-center text-xs <%= @sales_trend >= 0 ? 'text-green-500' : 'text-red-500' %> font-bold">
+        <span><%= @sales_trend >= 0 ? '↑' : '↓' %> <%= @sales_trend.abs %>% vs last month</span>
+      </div>
+    </div>
+    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+      <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-2">Total Participants</p>
+      <h3 class="text-3xl font-black text-gray-900"><%= @total_registrations %>명</h3>
+      <div class="mt-4 flex items-center text-xs text-blue-500 font-bold">
+        <span>Active across <%= @active_races %> races</span>
+      </div>
+    </div>
+    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+      <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-2">Total Users</p>
+      <h3 class="text-3xl font-black text-gray-900"><%= @total_users %>명</h3>
+      <div class="mt-4 flex items-center text-xs text-purple-500 font-bold">
+        <span>+<%= @users_today %> new today</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-3 gap-12">
+    <!-- Recent Registrations Table -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-8 border-b border-gray-50">
+          <h3 class="text-xl font-black text-gray-900">Recent Registrations</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="bg-gray-50 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                <th class="px-8 py-4">Runner</th>
+                <th class="px-8 py-4">Race</th>
+                <th class="px-8 py-4">Amount</th>
+                <th class="px-8 py-4">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+              <% @recent_registrations.each do |reg| %>
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="px-8 py-5">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-black text-[10px]">
+                        <%= reg.user.name[0] %>
+                      </div>
+                      <span class="font-bold text-gray-900 text-sm"><%= reg.user.name %></span>
+                    </div>
+                  </td>
+                  <td class="px-8 py-5">
+                    <p class="text-sm font-medium text-gray-700"><%= reg.race_edition.name %></p>
+                    <p class="text-[10px] text-gray-400 font-bold"><%= reg.race.title %></p>
+                  </td>
+                  <td class="px-8 py-5 font-bold text-gray-900 text-sm">
+                    <%= number_to_currency(reg.payment_amount, unit: '₩', precision: 0) %>
+                  </td>
+                  <td class="px-8 py-5">
+                    <span class="px-3 py-1 bg-green-50 text-green-600 text-[10px] font-black rounded-full uppercase"><%= reg.status %></span>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="space-y-8">
+      <div class="bg-gray-900 rounded-[2.5rem] p-10 text-white shadow-2xl shadow-blue-100/20">
+        <h4 class="text-xl font-black mb-8 border-b border-white/10 pb-4 tracking-tighter">System Actions</h4>
+        <div class="space-y-4">
+          <%= link_to admin_settlements_path, class: "w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl font-bold transition-all text-sm flex items-center px-6 text-green-400" do %>
+            <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            정산 관리
+          <% end %>
+          <button class="w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl font-bold transition-all text-sm flex items-center px-6">
+            <svg class="h-5 w-5 mr-3 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+            기록 엑셀 업로드
+          </button>
+          <button class="w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl font-bold transition-all text-sm flex items-center px-6 text-red-400">
+            <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            시스템 점검 모드
+          </button>
+        </div>
+      </div>
+      
+      <div class="bg-blue-50 rounded-[2.5rem] p-8 border border-blue-100">
+        <h4 class="font-black text-blue-900 mb-2">다가오는 대회</h4>
+        <p class="text-sm text-blue-700 leading-relaxed font-medium mb-6">현재 <%= @active_races %>개의 대회가 참가 접수 중입니다.</p>
+        <%= link_to "대회 관리 →", admin_races_path, class: "text-blue-600 font-bold hover:underline text-sm uppercase tracking-widest" %>
+      </div>
+    </div>
+  </div>
+</div>

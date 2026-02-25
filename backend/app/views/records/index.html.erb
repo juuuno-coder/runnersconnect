@@ -1,0 +1,103 @@
+<div class="max-w-6xl mx-auto px-6 py-16">
+  <%= render 'shared/page_header', 
+      title: "나의 러닝 기록", 
+      icon: "📊", 
+      description: "모든 대회 기록과 개인 베스트를 한눈에 확인하세요." %>
+
+  <!-- Personal Bests Summary -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12 mt-12">
+    <% [
+      { label: "5K PB", value: (@pb_5k || "--:--"), color: "bg-blue-600 shadow-blue-100" },
+      { label: "10K PB", value: (@pb_10k || "--:--"), color: "bg-indigo-600 shadow-indigo-100" },
+      { label: "Half PB", value: (@pb_half || "--:--:--"), color: "bg-purple-600 shadow-purple-100" },
+      { label: "Full PB", value: (@pb_full || "--:--:--"), color: "bg-gray-900 shadow-gray-100" }
+    ].each do |pb| %>
+      <%= render_card class: "#{pb[:color]} border-none p-6 text-white shadow-lg rounded-2xl" do %>
+        <p class="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-2"><%= pb[:label] %></p>
+        <p class="text-3xl font-black tracking-tighter"><%= pb[:value] %></p>
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="grid md:grid-cols-2 gap-6 mb-12">
+    <%= render_card class: "bg-white p-8 rounded-2xl shadow-sm border-gray-100" do %>
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total Distance</p>
+          <p class="text-4xl font-black text-gray-900 tracking-tighter">
+            <%= number_with_precision(@total_distance, precision: 1) %> <span class="text-xl opacity-40">km</span>
+          </p>
+        </div>
+        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 shadow-inner">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        </div>
+      </div>
+    <% end %>
+
+    <%= render_card class: "bg-white p-8 rounded-2xl shadow-sm border-gray-100" do %>
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total Races</p>
+          <p class="text-4xl font-black text-gray-900 tracking-tighter">
+            <%= @total_races %> <span class="text-xl opacity-40">events</span>
+          </p>
+        </div>
+        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 shadow-inner">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Records Timeline -->
+  <%= render_card class: "bg-white rounded-2xl shadow-sm border-gray-100 overflow-hidden p-0" do %>
+    <div class="p-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
+      <h2 class="text-xl font-bold text-gray-900">완주 기록</h2>
+      <span class="text-xs font-bold text-gray-400"><%= @records.count %> Records</span>
+    </div>
+
+    <% if @records.any? %>
+      <div class="divide-y divide-gray-50">
+        <% @records.each do |record| %>
+          <%= link_to record_path(record), class: "block p-6 hover:bg-gray-50/50 transition-all" do %>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="bg-blue-600 text-white font-bold px-2 py-0.5 rounded text-[10px]"><%= record.race_edition.distance %>K</span>
+                  <h3 class="text-lg font-bold text-gray-900"><%= record.race_edition.race.title %></h3>
+                </div>
+                <div class="flex items-center text-xs font-medium text-gray-400 space-x-2">
+                  <span><%= record.race_edition.name %></span>
+                  <span class="opacity-30">·</span>
+                  <span><%= record.created_at.strftime("%Y.%m.%d") %></span>
+                </div>
+              </div>
+              <div class="flex items-center md:text-right md:flex-col gap-4 md:gap-1">
+                <div class="flex-1 md:flex-none">
+                  <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Net Time</p>
+                  <p class="text-2xl font-black text-gray-900 tracking-tighter">
+                    <%= record.net_time || "대기중" %>
+                  </p>
+                </div>
+                <% if record.rank_overall %>
+                  <div class="px-3 py-1 bg-gray-900 text-white rounded-full">
+                    <p class="text-[10px] font-bold"><%= record.rank_overall %>위</p>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="py-24 text-center">
+        <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-gray-200 border border-gray-100 shadow-inner">
+          <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <h3 class="text-lg font-bold text-gray-900 mb-2">기록이 없습니다</h3>
+        <%= link_to "대회 둘러보기", races_path, class: "text-blue-600 font-bold text-sm underline underline-offset-4" %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

@@ -1,0 +1,246 @@
+:root {
+  --font-sans: "Inter var";
+
+  /* 🎨 Core Brand Colors - 생동감 있는 블루 */
+  --primary: 217 91% 60%;
+  --primary-foreground: 0 0% 100%;
+
+  /* 🌫️ Secondary - 부드러운 회색 */
+  --secondary: 215 16% 97%;
+  --secondary-foreground: 222 47% 11%;
+
+  /* ⚡ Accent - 전기 같은 틸 */
+  --accent: 189 94% 43%;
+  --accent-foreground: 0 0% 100%;
+
+  /* ✅ Success - 신선한 그린 */
+  --success: 142 71% 45%;
+  --success-foreground: 0 0% 100%;
+
+  /* ⚠️ Warning - 앰버 알림 */
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+
+  /* ❌ Destructive */
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+
+  /* 🎭 Backgrounds & Surfaces */
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+
+  /* 🔇 Muted (보조 텍스트) */
+  --muted: 215 16% 97%;
+  --muted-foreground: 215 20% 65%;
+
+  /* 🔲 Border & Input - 더 부드러운 보더 */
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 217 91% 60%;
+
+  /* 📐 Border Radius - 더 큰 라운딩 */
+  --radius: 0.75rem;
+
+  /* 🏃 Running-Specific Semantic Colors */
+  --race-live: 142 71% 45%;
+  --race-upcoming: 217 91% 60%;
+  --race-closed: 215 20% 65%;
+  --race-sold-out: 0 84.2% 60.2%;
+
+  /* 🏆 Performance Colors */
+  --pb-gold: 45 93% 47%;
+  --rank-platinum: 262 83% 58%;
+
+  /* Legacy (유지) */
+  --info: 223 78% 42%;
+  --info-foreground: 225 100% 50%;
+  --attention: 45 90% 45%;
+  --attention-foreground: 60 98.4% 48.8% 0.82;
+}
+@layer base {
+  .dark {
+    --primary: 217 91% 70%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --accent: 189 94% 53%;
+    --accent-foreground: 222 47% 11%;
+    --success: 142 71% 55%;
+    --success-foreground: 222 47% 11%;
+    --warning: 38 92% 60%;
+    --warning-foreground: 222 47% 11%;
+    --destructive: 0 62.8% 50.6%;
+    --destructive-foreground: 0 0% 98%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 217 91% 70%;
+    --radius: 0.75rem;
+    --race-live: 142 71% 55%;
+    --race-upcoming: 217 91% 70%;
+    --race-closed: 240 5% 64.9%;
+    --race-sold-out: 0 62.8% 50.6%;
+    --pb-gold: 45 93% 57%;
+    --rank-platinum: 262 83% 68%;
+    --info: 223 78% 52%;
+    --info-foreground: 0 0% 98%;
+    --attention: 45 90% 55%;
+    --attention-foreground: 222 47% 11%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+  }
+
+  .code-sample {
+    @apply max-h-[650px] min-h-[350px] overflow-x-auto rounded-lg border bg-zinc-950 dark:bg-zinc-900;
+  }
+
+  .code-sample pre {
+    @apply min-h-[350px];
+  }
+
+  .code-sample span {
+    @apply bg-zinc-950;
+  }
+  input.error {
+    @apply border-red-400;
+  }
+
+  label.error {
+    @apply text-destructive;
+  }
+
+  input.error:focus-visible {
+    @apply ring-destructive;
+  }
+}
+
+input[type="range"] {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 1em;
+  font-family: Arial, sans-serif;
+}
+
+/* input[type="range"]:focus,
+input[type="number"]:focus {
+  box-shadow: 0 0 3px 1px #4b81dd;
+  outline: none;
+} */
+
+input[type="range"] {
+  -webkit-appearance: none;
+  margin-right: 15px;
+  min-width: 200px;
+  height: 7px;
+  background: #f4f4f5;
+  border-radius: 5px;
+  background-image: linear-gradient(#000, #000);
+  background-repeat: no-repeat;
+}
+
+/* Input Thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: ew-resize;
+  box-shadow: 0 0 2px 0 #000;
+  transition: background 0.3s ease-in-out;
+}
+
+input[type="range"]::-moz-range-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: ew-resize;
+  box-shadow: 0 0 2px 0 #000;
+  transition: background 0.3s ease-in-out;
+}
+
+input[type="range"]::-ms-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: ew-resize;
+  box-shadow: 0 0 2px 0 #000;
+  transition: background 0.3s ease-in-out;
+}
+
+/* input[type="range"]::-webkit-slider-thumb:hover {
+  background: #a1a1aa;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  background: #a1a1aa;
+}
+
+input[type="range"]::-ms-thumb:hover {
+  background: #a1a1aa;
+} */
+
+input[type="range"]::-moz-range-track {
+  -webkit-appearance: none;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+}
+
+input[type="range"]::-ms-track {
+  -webkit-appearance: none;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+}
+
+.st-accordion .st-accordion__icon:before {
+  content: "▼";
+  display: inline-block;
+  margin-right: 5px;
+  font-size: 80%;
+  text-decoration: none;
+  transform: rotate(-90deg);
+}
+.st-accordion .st-accordion__icon--opened:before {
+  transform: rotate(0deg);
+}
+
+.st-accordion .st-accordion__content:not(.st-accordion__content--visible) {
+  height: 0;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.st-accordion .st-accordion__content.st-accordion__content--visible {
+  opacity: 1;
+  visibility: visible;
+  overflow: hidden;
+  transition: all 0.2s;
+}

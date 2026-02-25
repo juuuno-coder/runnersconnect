@@ -1,0 +1,145 @@
+<div class="space-y-6">
+  <!-- 페이지 헤더 -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-black text-gray-900"><%= @race.title %> - 굿즈 관리</h1>
+      <p class="text-gray-500 font-medium mt-2">대회 기념품 외 추가 상품을 관리할 수 있습니다</p>
+    </div>
+    <div class="flex gap-3">
+      <%= link_to "← 대회 상세", organizer_race_path(@race), class: "text-sm font-bold text-gray-600 hover:text-gray-900" %>
+      <%= link_to "➕ 상품 등록", new_organizer_race_product_path(@race), class: "px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition-colors text-sm" %>
+    </div>
+  </div>
+
+  <!-- 상품 목록 -->
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+      <h2 class="text-lg font-black text-gray-900">등록된 상품 (<%= @products.count %>개)</h2>
+    </div>
+
+    <% if @products.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">상품</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">가격</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">재고</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">옵션</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">상태</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-600 uppercase tracking-wider">관리</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <% @products.each do |product| %>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <% if product.images.attached? %>
+                      <%= image_tag product.images.first, size: '50x50', class: 'rounded-lg object-cover' %>
+                    <% else %>
+                      <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    <% end %>
+                    <div>
+                      <p class="font-bold text-gray-900"><%= product.name %></p>
+                      <% if product.description.present? %>
+                        <p class="text-sm text-gray-500 line-clamp-1"><%= product.description %></p>
+                      <% end %>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="font-black text-indigo-600">
+                    <%= number_to_currency(product.price, unit: '₩', precision: 0, delimiter: ',') %>
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="font-bold <%= product.stock > 10 ? 'text-green-600' : product.stock > 0 ? 'text-yellow-600' : 'text-red-600' %>">
+                    <%= product.stock %>개
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex gap-2">
+                    <% if product.size.present? %>
+                      <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-bold bg-blue-100 text-blue-800">
+                        <%= product.size %>
+                      </span>
+                    <% end %>
+                    <% if product.color.present? %>
+                      <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-bold bg-purple-100 text-purple-800">
+                        <%= product.color %>
+                      </span>
+                    <% end %>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold
+                    <%= case product.status
+                        when 'active' then 'bg-green-100 text-green-800'
+                        when 'inactive' then 'bg-gray-100 text-gray-800'
+                        when 'sold_out' then 'bg-red-100 text-red-800'
+                        end %>">
+                    <%= case product.status
+                        when 'active' then '✓ 판매중'
+                        when 'inactive' then '⏸ 비활성'
+                        when 'sold_out' then '✗ 품절'
+                        end %>
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex gap-2">
+                    <%= link_to '수정', edit_organizer_race_product_path(@race, product), class: 'px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-lg transition-colors text-sm' %>
+                    <%= button_to '삭제', organizer_race_product_path(@race, product),
+                        method: :delete,
+                        data: { confirm: '정말 삭제하시겠습니까?' },
+                        class: 'px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 font-bold rounded-lg transition-colors text-sm' %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="p-12 text-center">
+        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+        </svg>
+        <p class="text-gray-500 font-medium mb-4">아직 등록된 상품이 없습니다</p>
+        <%= link_to "첫 상품 등록하기", new_organizer_race_product_path(@race), class: "inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 안내 -->
+  <div class="bg-blue-50 rounded-2xl border border-blue-200 p-6">
+    <div class="flex items-start gap-4">
+      <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div class="flex-1">
+        <h3 class="text-lg font-black text-blue-900 mb-2">굿즈 판매 안내</h3>
+        <ul class="space-y-1 text-sm text-blue-800">
+          <li class="flex items-start gap-2">
+            <span class="text-blue-600 mt-1">•</span>
+            <span>대회 기념품 외에 티셔츠, 모자 등 추가 상품을 판매할 수 있습니다</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-blue-600 mt-1">•</span>
+            <span>재고가 0이 되면 자동으로 품절 처리됩니다</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-blue-600 mt-1">•</span>
+            <span>상품 이미지는 최대 5MB까지 업로드 가능합니다</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

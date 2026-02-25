@@ -1,0 +1,223 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- 헤더 -->
+    <div class="mb-12 flex items-center justify-between">
+      <div>
+        <h1 class="text-4xl font-black text-gray-900 mb-2">📊 기록 통계 대시보드</h1>
+        <p class="text-lg text-gray-600"><%= @race.title %></p>
+      </div>
+      <%= link_to "← 대회 관리", organizer_race_path(@race), class: "px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold rounded-xl transition-all" %>
+    </div>
+
+    <!-- 전체 통계 카드 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-black text-gray-700">총 참가자</h3>
+          <span class="text-4xl">👥</span>
+        </div>
+        <p class="text-4xl font-black text-blue-600"><%= @total_participants %>명</p>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-black text-gray-700">기록 등록</h3>
+          <span class="text-4xl">✅</span>
+        </div>
+        <p class="text-4xl font-black text-green-600"><%= @total_records %>명</p>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-black text-gray-700">완주율</h3>
+          <span class="text-4xl">🏁</span>
+        </div>
+        <p class="text-4xl font-black text-purple-600"><%= @completion_rate %>%</p>
+      </div>
+    </div>
+
+    <!-- 종목별 통계 -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-12">
+      <h2 class="text-2xl font-black text-gray-900 mb-6">📋 종목별 통계</h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">종목</th>
+              <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">참가자</th>
+              <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">완주자</th>
+              <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">완주율</th>
+              <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">평균 기록</th>
+              <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">최고 기록</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <% @edition_stats.each do |stat| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="font-bold text-gray-900"><%= stat[:edition].name %></div>
+                  <div class="text-sm text-gray-500"><%= stat[:edition].distance %>km</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap font-bold text-gray-900">
+                  <%= stat[:participants] %>명
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap font-bold text-green-600">
+                  <%= stat[:finishers] %>명
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-3 py-1 rounded-full text-sm font-bold <%= stat[:completion_rate] >= 90 ? 'bg-green-100 text-green-800' : stat[:completion_rate] >= 70 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800' %>">
+                    <%= stat[:completion_rate] %>%
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap font-bold text-gray-900">
+                  <%= stat[:avg_time] > 0 ? Time.at(stat[:avg_time]).utc.strftime('%H:%M:%S') : '-' %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap font-bold text-blue-600">
+                  <%= stat[:fastest_time] > 0 ? Time.at(stat[:fastest_time]).utc.strftime('%H:%M:%S') : '-' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 성별 & 연령대 통계 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+      <!-- 성별 통계 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <h2 class="text-2xl font-black text-gray-900 mb-6">👫 성별 통계</h2>
+
+        <div class="space-y-4">
+          <% @gender_stats.each do |gender, stats| %>
+            <div class="border-b border-gray-100 pb-4 last:border-0">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-bold text-gray-700">
+                  <%= gender == 'male' ? '👨 남성' : '👩 여성' %>
+                </h3>
+                <span class="text-2xl font-black text-blue-600"><%= stats[:count] %>명</span>
+              </div>
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p class="text-gray-500">평균 기록</p>
+                  <p class="font-bold text-gray-900">
+                    <%= stats[:avg_time] > 0 ? Time.at(stats[:avg_time]).utc.strftime('%H:%M:%S') : '-' %>
+                  </p>
+                </div>
+                <div>
+                  <p class="text-gray-500">최고 기록</p>
+                  <p class="font-bold text-green-600">
+                    <%= stats[:fastest_time] > 0 ? Time.at(stats[:fastest_time]).utc.strftime('%H:%M:%S') : '-' %>
+                  </p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- 연령대 통계 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <h2 class="text-2xl font-black text-gray-900 mb-6">📅 연령대 통계</h2>
+
+        <div class="space-y-3">
+          <% @age_group_stats.each do |age_group, stats| %>
+            <% if stats[:count] > 0 %>
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div class="flex-1">
+                  <span class="font-bold text-gray-900"><%= age_group %></span>
+                  <span class="text-sm text-gray-500 ml-2">(<%= stats[:count] %>명)</span>
+                </div>
+                <div class="text-right">
+                  <p class="text-sm font-bold text-blue-600">
+                    <%= stats[:avg_time] > 0 ? Time.at(stats[:avg_time]).utc.strftime('%H:%M:%S') : '-' %>
+                  </p>
+                  <p class="text-xs text-gray-500">평균</p>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- 시간대별 분포 차트 -->
+    <% if @time_distribution.any? %>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-12">
+        <h2 class="text-2xl font-black text-gray-900 mb-6">⏱️ 완주 시간 분포</h2>
+        <%= column_chart @time_distribution,
+            colors: ['#3B82F6'],
+            library: {
+              title: { text: '시간대별 완주자 수' },
+              xAxis: { title: { text: '완주 시간' } },
+              yAxis: { title: { text: '완주자 수 (명)' } }
+            } %>
+      </div>
+    <% end %>
+
+    <!-- 상위 완주자 -->
+    <% if @top_finishers.any? %>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <h2 class="text-2xl font-black text-gray-900 mb-6">🏆 상위 완주자</h2>
+
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-gray-200">
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">순위</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">참가자</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">종목</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">성별</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">연령대</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">기록</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">페이스</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <% @top_finishers.first(20).each_with_index do |record, index| %>
+                <tr class="hover:bg-gray-50 <%= index < 3 ? 'bg-yellow-50' : '' %>">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="text-2xl font-black <%= index == 0 ? 'text-yellow-500' : index == 1 ? 'text-gray-400' : index == 2 ? 'text-orange-600' : 'text-gray-600' %>">
+                      <%= index < 3 ? ['🥇', '🥈', '🥉'][index] : "#{index + 1}" %>
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="font-bold text-gray-900"><%= record.user.name %></div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= record.race_edition.name %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= record.user.gender == 'male' ? '남' : '여' %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= record.user.age_group %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="font-black text-lg text-blue-600">
+                      <%= Time.at(record.net_time).utc.strftime('%H:%M:%S') %>
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-600">
+                    <%= (record.net_time.to_f / 60 / record.race_edition.distance).round(2) %> 분/km
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- 데이터 없을 때 -->
+    <% if @total_records == 0 %>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-16 text-center">
+        <div class="text-6xl mb-4">📊</div>
+        <h3 class="text-2xl font-black text-gray-900 mb-2">아직 기록 데이터가 없습니다</h3>
+        <p class="text-gray-600 mb-6">대회 종료 후 참가자 기록을 업로드하면 통계가 표시됩니다</p>
+        <%= link_to "기록 업로드하기", upload_form_organizer_race_records_path(@race), class: "inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all" %>
+      </div>
+    <% end %>
+  </div>
+</div>

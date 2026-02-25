@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .content { background: #fff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }
+    .alert-box { background: #fef2f2; border-left: 4px solid #ef4444; padding: 15px; margin: 20px 0; border-radius: 4px; }
+    .details { background: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0; }
+    .details-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+    .details-row:last-child { border-bottom: none; }
+    .label { font-weight: 600; color: #6b7280; }
+    .value { color: #111827; }
+    .button { display: inline-block; background: #4f46e5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+    .footer { text-align: center; color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>❌ 정산 요청이 거부되었습니다</h1>
+  </div>
+
+  <div class="content">
+    <p><strong><%= @organizer.business_name %></strong> 님, 안녕하세요.</p>
+
+    <p><strong><%= @race.title %></strong> 대회의 정산 요청이 거부되었습니다.</p>
+
+    <div class="alert-box">
+      <strong style="color: #dc2626;">정산 거부 사유</strong>
+      <p style="margin: 10px 0 0 0; color: #991b1b;">
+        <%= @settlement.admin_memo.presence || '관리자가 별도의 사유를 남기지 않았습니다.' %>
+      </p>
+    </div>
+
+    <div class="details">
+      <h3 style="margin-top: 0; color: #111827;">정산 요청 내역</h3>
+
+      <div class="details-row">
+        <span class="label">대회명</span>
+        <span class="value"><%= @race.title %></span>
+      </div>
+
+      <div class="details-row">
+        <span class="label">참가자 수</span>
+        <span class="value"><%= @settlement.registration_count %>명</span>
+      </div>
+
+      <div class="details-row">
+        <span class="label">요청 금액</span>
+        <span class="value"><%= number_to_currency(@settlement.organizer_payout, precision: 0) %></span>
+      </div>
+
+      <div class="details-row">
+        <span class="label">요청일</span>
+        <span class="value"><%= @settlement.requested_at.strftime('%Y년 %m월 %d일 %H:%M') %></span>
+      </div>
+    </div>
+
+    <p style="background: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 20px 0;">
+      💡 <strong>다음 단계</strong><br>
+      거부 사유를 확인하시고 문제를 해결한 후 다시 정산을 요청하실 수 있습니다.
+      문의사항이 있으시면 관리자에게 연락 주세요.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="<%= organizer_settlements_url %>" class="button">정산 내역 확인하기</a>
+    </div>
+
+    <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+      궁금한 사항이 있으시면 언제든지 문의해주세요.<br>
+      감사합니다.
+    </p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Runner's Connect</strong></p>
+    <p>대회 운영의 모든 것, 러너스커넥트</p>
+  </div>
+</body>
+</html>

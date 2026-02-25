@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  race: one
+  order_number: MyString
+  status: MyString
+  total_amount: 9.99
+  shipping_address: MyText
+  shipping_phone: MyString
+  tracking_number: MyString
+
+two:
+  user: two
+  race: two
+  order_number: MyString
+  status: MyString
+  total_amount: 9.99
+  shipping_address: MyText
+  shipping_phone: MyString
+  tracking_number: MyString

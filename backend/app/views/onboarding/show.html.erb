@@ -1,0 +1,91 @@
+<div class="min-h-screen flex flex-col items-center justify-center p-6 sm:p-12">
+  <div class="max-w-lg w-full">
+    <div class="text-center mb-10">
+      <h2 class="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter mb-3">환영합니다! 🎉</h2>
+      <p class="text-gray-500 font-medium text-lg">프로필을 완성하고 러닝 여정을 시작하세요</p>
+    </div>
+
+    <div class="bg-white rounded-[2.5rem] shadow-xl shadow-blue-50 border border-gray-100 p-8 sm:p-10">
+      <%= form_with model: @user, url: onboarding_path, method: :patch, data: { controller: "avatar-preview" }, html: { class: "space-y-6", multipart: true } do |f| %>
+        <% if @user.errors.any? %>
+          <div class="p-4 bg-red-50 text-red-600 rounded-xl text-sm font-medium">
+            <ul class="space-y-1">
+              <% @user.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <!-- Avatar Upload -->
+        <div class="text-center">
+          <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">프로필 사진</p>
+          <div class="flex flex-col items-center">
+            <div class="relative mb-4">
+              <div class="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-4xl font-black shadow-xl" data-avatar-preview-target="placeholder">
+                <%= @user.name[0].upcase %>
+              </div>
+              <%= image_tag "", class: "hidden w-32 h-32 rounded-full object-cover shadow-xl ring-4 ring-white absolute top-0 left-0", data: { avatar_preview_target: "preview" } %>
+            </div>
+            <label class="cursor-pointer inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-all">
+              <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              사진 선택
+              <%= f.file_field :avatar, accept: "image/*", class: "hidden", data: { avatar_preview_target: "input", action: "change->avatar-preview#preview" } %>
+            </label>
+            <p class="text-xs text-gray-400 mt-2">5MB 이하, JPG/PNG</p>
+          </div>
+        </div>
+
+        <!-- Nickname -->
+        <div>
+          <%= f.label :nickname, "닉네임", class: "block text-sm font-bold text-gray-700 mb-2" %>
+          <%= f.text_field :nickname, placeholder: "러닝왕", class: "block w-full px-5 py-4 rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all" %>
+          <p class="text-xs text-gray-400 mt-1">다른 러너들에게 표시될 이름입니다</p>
+        </div>
+
+        <!-- Gender -->
+        <div>
+          <%= f.label :gender, "성별", class: "block text-sm font-bold text-gray-700 mb-3" %>
+          <div class="grid grid-cols-3 gap-3">
+            <% [["남성", "male"], ["여성", "female"], ["선택안함", nil]].each do |label, value| %>
+              <label class="cursor-pointer">
+                <input type="radio" name="user[gender]" value="<%= value %>" <%= 'checked' if @user.gender == value %> class="peer hidden">
+                <div class="flex items-center justify-center py-3 px-4 rounded-xl border-2 border-gray-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-600 text-gray-600 font-bold transition-all hover:border-gray-300">
+                  <%= label %>
+                </div>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Region -->
+        <div>
+          <%= f.label :region, "지역", class: "block text-sm font-bold text-gray-700 mb-2" %>
+          <%= f.select :region,
+              options_for_select(["서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종", "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주"], @user.region),
+              { include_blank: "지역을 선택하세요" },
+              class: "block w-full px-5 py-4 rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all" %>
+        </div>
+
+        <!-- Age Group -->
+        <div>
+          <%= f.label :age_group, "연령대", class: "block text-sm font-bold text-gray-700 mb-2" %>
+          <%= f.select :age_group,
+              options_for_select(["10대", "20대", "30대", "40대", "50대", "60대이상"], @user.age_group),
+              { include_blank: "연령대를 선택하세요" },
+              class: "block w-full px-5 py-4 rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all" %>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-4">
+          <%= f.submit "시작하기", class: "w-full py-5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl shadow-xl shadow-blue-100 transition-all active:scale-[0.98] text-lg cursor-pointer" %>
+        </div>
+      <% end %>
+
+      <!-- Skip Link -->
+      <div class="mt-6 text-center">
+        <%= link_to "나중에 하기", skip_onboarding_path, method: :post, class: "text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors" %>
+      </div>
+    </div>
+  </div>
+</div>

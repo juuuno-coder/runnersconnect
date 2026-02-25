@@ -1,0 +1,226 @@
+<div class="max-w-7xl mx-auto space-y-8">
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-black text-gray-900">정산 관리</h1>
+  </div>
+
+  <!-- 통계 카드 -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-bold text-yellow-800 mb-1">승인 대기</p>
+          <p class="text-3xl font-black text-yellow-900"><%= @pending_settlements.count %></p>
+        </div>
+        <div class="text-right">
+          <p class="text-xs text-yellow-700 mb-1">총 정산액</p>
+          <p class="text-lg font-bold text-yellow-900"><%= number_to_currency(@pending_total, precision: 0) %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-bold text-blue-800 mb-1">승인 완료</p>
+          <p class="text-3xl font-black text-blue-900"><%= @approved_settlements.count %></p>
+        </div>
+        <div class="text-right">
+          <p class="text-xs text-blue-700 mb-1">총 정산액</p>
+          <p class="text-lg font-bold text-blue-900"><%= number_to_currency(@approved_total, precision: 0) %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-green-50 border-2 border-green-200 rounded-2xl p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-bold text-green-800 mb-1">지급 완료</p>
+          <p class="text-3xl font-black text-green-900"><%= Settlement.where(status: 'paid').count %></p>
+        </div>
+        <div class="text-right">
+          <p class="text-xs text-green-700 mb-1">총 지급액</p>
+          <p class="text-lg font-bold text-green-900"><%= number_to_currency(@paid_total, precision: 0) %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 승인 대기 중인 정산 -->
+  <% if @pending_settlements.any? %>
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div class="bg-gradient-to-r from-yellow-500 to-orange-500 px-6 py-4">
+        <h2 class="text-xl font-black text-white">승인 대기 중 (<%=@pending_settlements.count%>건)</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">주최자</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">대회명</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">참가자</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">총 매출</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">수수료</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">정산액</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">계좌 정보</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">요청일</th>
+              <th class="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">액션</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <% @pending_settlements.each do |settlement| %>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4">
+                  <div class="text-sm font-bold text-gray-900"><%= settlement.organizer_profile.business_name %></div>
+                  <div class="text-xs text-gray-500"><%= settlement.organizer_profile.contact_email %></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm font-bold text-gray-900"><%= settlement.race.title %></div>
+                  <div class="text-xs text-gray-500"><%= settlement.race.start_at.strftime('%Y-%m-%d') %></div>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900"><%= settlement.registration_count %>명</td>
+                <td class="px-6 py-4">
+                  <div class="text-sm font-bold text-gray-900"><%= number_to_currency(settlement.total_revenue, precision: 0) %></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm text-red-600"><%= number_to_currency(settlement.platform_commission, precision: 0) %></div>
+                  <div class="text-xs text-gray-500">5% + 500원/명</div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm font-black text-green-600"><%= number_to_currency(settlement.organizer_payout, precision: 0) %></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-xs text-gray-700">
+                    <p class="font-bold"><%= settlement.organizer_profile.bank_name %></p>
+                    <p><%= settlement.organizer_profile.bank_account %></p>
+                    <p class="text-gray-500"><%= settlement.organizer_profile.account_holder %></p>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900">
+                  <%= settlement.requested_at.strftime('%Y-%m-%d %H:%M') %>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center justify-center gap-2">
+                    <%= button_to '승인',
+                        approve_admin_settlement_path(settlement),
+                        method: :post,
+                        data: { confirm: "#{settlement.organizer_profile.business_name}의 정산 #{number_to_currency(settlement.organizer_payout, precision: 0)}을(를) 승인하시겠습니까?" },
+                        class: 'px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-lg transition-colors' %>
+
+                    <%= button_to '거부',
+                        reject_admin_settlement_path(settlement),
+                        method: :post,
+                        data: { confirm: '정산을 거부하시겠습니까?' },
+                        class: 'px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg transition-colors' %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-8 text-center">
+      <p class="text-yellow-800 font-bold">승인 대기 중인 정산이 없습니다.</p>
+    </div>
+  <% end %>
+
+  <!-- 승인 완료 (지급 대기) -->
+  <% if @approved_settlements.any? %>
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div class="bg-gradient-to-r from-blue-500 to-indigo-500 px-6 py-4">
+        <h2 class="text-xl font-black text-white">승인 완료 - 지급 대기 중 (최근 10건)</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">주최자</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">대회명</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">정산액</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">계좌 정보</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">승인일</th>
+              <th class="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">액션</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <% @approved_settlements.each do |settlement| %>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4">
+                  <div class="text-sm font-bold text-gray-900"><%= settlement.organizer_profile.business_name %></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm font-bold text-gray-900"><%= settlement.race.title %></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm font-black text-green-600"><%= number_to_currency(settlement.organizer_payout, precision: 0) %></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-xs text-gray-700">
+                    <p class="font-bold"><%= settlement.organizer_profile.bank_name %></p>
+                    <p><%= settlement.organizer_profile.bank_account %></p>
+                    <p class="text-gray-500"><%= settlement.organizer_profile.account_holder %></p>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900">
+                  <%= settlement.approved_at.strftime('%Y-%m-%d %H:%M') %>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center justify-center">
+                    <%= button_to '지급 완료',
+                        mark_paid_admin_settlement_path(settlement),
+                        method: :post,
+                        data: { confirm: "#{settlement.organizer_profile.business_name}에게 #{number_to_currency(settlement.organizer_payout, precision: 0)}을(를) 지급 완료 처리하시겠습니까?" },
+                        class: 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors' %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- 지급 완료 내역 -->
+  <% if @paid_settlements.any? %>
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div class="bg-gradient-to-r from-green-500 to-emerald-500 px-6 py-4">
+        <h2 class="text-xl font-black text-white">지급 완료 내역 (최근 10건)</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">주최자</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">대회명</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">정산액</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">지급일</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <% @paid_settlements.each do |settlement| %>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4">
+                  <div class="text-sm font-bold text-gray-900"><%= settlement.organizer_profile.business_name %></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm font-bold text-gray-900"><%= settlement.race.title %></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm font-black text-green-600"><%= number_to_currency(settlement.organizer_payout, precision: 0) %></div>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900">
+                  <%= settlement.paid_at.strftime('%Y-%m-%d %H:%M') %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+</div>

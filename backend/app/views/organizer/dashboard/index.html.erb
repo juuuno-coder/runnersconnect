@@ -1,0 +1,158 @@
+<div class="space-y-8">
+  <!-- 페이지 헤더 -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-black text-gray-900">주최자 대시보드</h1>
+      <p class="text-gray-500 font-medium mt-2">
+        <%= current_organizer_profile&.business_name || current_user.display_name %> 님, 환영합니다!
+      </p>
+    </div>
+  </div>
+
+  <!-- 통계 카드 -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- 진행 중인 대회 -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+      </div>
+      <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">진행 중인 대회</h3>
+      <p class="text-4xl font-black text-gray-900"><%= @upcoming_races.count %></p>
+    </div>
+
+    <!-- 총 참가자 -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        </div>
+      </div>
+      <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">총 참가자</h3>
+      <p class="text-4xl font-black text-gray-900"><%= @total_participants %><span class="text-xl text-gray-400 ml-1">명</span></p>
+    </div>
+
+    <!-- 전체 대회 -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+        </div>
+      </div>
+      <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">전체 대회</h3>
+      <p class="text-4xl font-black text-gray-900"><%= @races.count %></p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- 다가오는 대회 목록 -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm">
+      <div class="p-6 border-b border-gray-200">
+        <h2 class="text-xl font-black text-gray-900">다가오는 대회</h2>
+      </div>
+
+      <div class="divide-y divide-gray-100">
+        <% if @upcoming_races.any? %>
+          <% @upcoming_races.each do |race| %>
+            <div class="p-6 hover:bg-gray-50 transition-colors">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <h3 class="font-bold text-gray-900 mb-2"><%= race.title %></h3>
+                  <div class="flex items-center gap-4 text-sm text-gray-500">
+                    <span class="flex items-center gap-1">
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <%= race.start_at.strftime('%Y년 %m월 %d일') %>
+                    </span>
+                    <span class="flex items-center gap-1">
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                      <%= race.registrations.where(status: 'paid').count %>명 참가
+                    </span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 ml-4">
+                  <span class="px-3 py-1 bg-<%= race.status == 'open' ? 'green' : 'gray' %>-100 text-<%= race.status == 'open' ? 'green' : 'gray' %>-700 text-xs font-bold rounded-full">
+                    <%= race.status == 'open' ? '접수중' : race.status == 'closed' ? '마감' : race.status %>
+                  </span>
+                </div>
+              </div>
+
+              <div class="mt-4 flex gap-3">
+                <%= link_to organizer_race_path(race), class: "text-sm font-bold text-indigo-600 hover:text-indigo-700" do %>
+                  상세보기 →
+                <% end %>
+                <%= link_to organizer_race_record_statistics_path(race), class: "text-sm font-bold text-blue-600 hover:text-blue-700" do %>
+                  📊 기록 통계 →
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="p-12 text-center">
+            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+            <p class="text-gray-500 font-medium">예정된 대회가 없습니다</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- 최근 참가 신청 -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm">
+      <div class="p-6 border-b border-gray-200">
+        <h2 class="text-xl font-black text-gray-900">최근 참가 신청</h2>
+      </div>
+
+      <div class="divide-y divide-gray-100">
+        <% if @recent_registrations.any? %>
+          <% @recent_registrations.each do |registration| %>
+            <div class="p-6 hover:bg-gray-50 transition-colors">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <% if registration.user.avatar.attached? %>
+                    <%= image_tag registration.user.avatar.variant(:thumb), class: "w-10 h-10 rounded-full object-cover" %>
+                  <% else %>
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-black">
+                      <%= registration.user.display_name[0].upcase %>
+                    </div>
+                  <% end %>
+
+                  <div>
+                    <p class="font-bold text-gray-900"><%= registration.user.name %></p>
+                    <p class="text-sm text-gray-500">
+                      <%= registration.race.title %> - <%= registration.race_edition.name %>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="text-right">
+                  <p class="text-xs text-gray-400 font-medium">
+                    <%= time_ago_in_words(registration.created_at) %> 전
+                  </p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="p-12 text-center">
+            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <p class="text-gray-500 font-medium">아직 참가 신청이 없습니다</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

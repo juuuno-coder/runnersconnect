@@ -1,0 +1,55 @@
+Rails.application.routes.draw do
+  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+
+  devise_for :users,
+             path: '',
+             path_names: {
+               sign_in: 'api/v1/auth/login',
+               sign_out: 'api/v1/auth/logout',
+               registration: 'api/v1/auth/signup'
+             },
+             controllers: {
+               sessions: 'api/v1/sessions',
+               registrations: 'api/v1/registrations'
+             }
+
+
+  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
+  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  get "up" => "rails/health#show", as: :rails_health_check
+
+  # Defines the root path route ("/")
+  namespace :api do
+    namespace :v1 do
+      resources :status, only: [:index]
+      resources :races, only: [:index, :show]
+      resources :registrations, only: [:create, :index], controller: 'race_registrations'
+      resource :profile, only: [:show, :update]
+
+      namespace :admin do
+        get 'dashboard', to: 'dashboard#index'
+        resources :records, only: [] do
+          collection do
+            post :upload
+          end
+        end
+      end
+
+
+    end
+  end
+
+  resources :registrations, only: [:index, :show, :new, :create]
+  resources :crews, only: [:index, :new, :create, :show]
+  resources :races, only: [:index, :show]
+  resources :rankings, only: [:index]
+  resources :records, only: [:index, :show]
+  resource :profile, only: [:show, :edit, :update]
+
+  namespace :admin do
+    root to: "dashboard#index"
+    resources :dashboard, only: [:index]
+  end
+
+  root "home#index"
+end

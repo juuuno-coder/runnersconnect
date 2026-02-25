@@ -1,0 +1,137 @@
+<div class="max-w-6xl mx-auto px-6 py-16">
+  <!-- Back navigation -->
+  <div class="mb-8">
+    <%= link_to records_path, class: "inline-flex items-center text-sm font-bold text-gray-400 hover:text-gray-900 transition-colors" do %>
+      <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      기록 목록으로
+    <% end %>
+  </div>
+
+  <!-- Race Header -->
+  <div class="bg-gray-900 rounded-3xl p-10 text-white mb-12 relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-blue-600 rounded-full blur-[120px] opacity-30 pointer-events-none"></div>
+    <div class="relative z-10">
+      <span class="px-4 py-1.5 bg-white/10 rounded-full text-xs font-black uppercase tracking-widest text-blue-200 border border-white/10 mb-4 inline-block">
+        <%= @record.race_edition.distance %>K &middot; <%= @record.race_edition.name %>
+      </span>
+      <h1 class="text-3xl md:text-4xl font-black tracking-tighter mb-2">
+        <%= @record.race_edition.race.title %>
+      </h1>
+      <div class="flex items-center text-gray-400 text-sm font-medium space-x-4">
+        <span><%= @record.race_edition.race.location %></span>
+        <span>&middot;</span>
+        <span><%= @record.race_edition.race.start_at.strftime("%Y.%m.%d") %></span>
+      </div>
+      <% if @record.is_verified %>
+        <span class="mt-4 inline-flex items-center px-3 py-1 bg-green-500/20 text-green-300 text-xs font-bold rounded-full">
+          <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          Verified Official Record
+        </span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-3 gap-8">
+    <!-- Left: Times & Rankings -->
+    <div class="lg:col-span-2 space-y-8">
+      <!-- Time Cards -->
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="bg-blue-600 rounded-2xl p-8 text-white shadow-lg shadow-blue-100">
+          <p class="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-2">Net Time</p>
+          <p class="text-4xl font-black tracking-tighter"><%= @record.net_time || "--:--:--" %></p>
+        </div>
+        <div class="bg-white rounded-2xl p-8 border border-gray-200">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Gun Time</p>
+          <p class="text-4xl font-black tracking-tighter text-gray-900"><%= @record.gun_time || "--:--:--" %></p>
+        </div>
+      </div>
+
+      <!-- Rankings -->
+      <div class="grid grid-cols-3 gap-4">
+        <% [
+          { label: "Overall", value: @record.rank_overall },
+          { label: "Gender", value: @record.rank_gender },
+          { label: "Age Group", value: @record.rank_age }
+        ].each do |rank| %>
+          <div class="bg-white rounded-2xl p-6 border border-gray-200 text-center">
+            <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2"><%= rank[:label] %></p>
+            <p class="text-3xl font-black text-gray-900">
+              <%= rank[:value] ? "#{rank[:value]}위" : "N/A" %>
+            </p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Splits -->
+      <% if @record.splits.present? %>
+        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+          <div class="p-6 border-b border-gray-50 bg-gray-50/50">
+            <h2 class="text-lg font-bold text-gray-900">Split Times</h2>
+          </div>
+          <div class="divide-y divide-gray-50">
+            <% @record.splits.each do |split| %>
+              <div class="px-6 py-4 flex items-center justify-between">
+                <span class="font-bold text-gray-700"><%= split["label"] || split["distance"] %></span>
+                <span class="font-black text-gray-900"><%= split["time"] %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Right sidebar -->
+    <div class="space-y-8">
+      <!-- Pace Info -->
+      <div class="bg-white rounded-2xl border border-gray-200 p-6">
+        <h3 class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4">Race Info</h3>
+        <div class="space-y-4">
+          <div>
+            <p class="text-xs text-gray-400 mb-1">Distance</p>
+            <p class="text-lg font-black text-gray-900"><%= @record.race_edition.distance %>km</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 mb-1">Edition</p>
+            <p class="text-lg font-black text-gray-900"><%= @record.race_edition.name %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certificate -->
+      <% if @record.certificate_url.present? %>
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 text-center">
+          <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-blue-600">
+            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-4">Finisher Certificate</h3>
+          <%= link_to "다운로드", @record.certificate_url, class: "inline-flex items-center px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all text-sm", target: "_blank" %>
+        </div>
+      <% end %>
+
+      <!-- Photos -->
+      <% if @record.photo_urls.present? %>
+        <div class="bg-white rounded-2xl border border-gray-200 p-6">
+          <h3 class="font-bold text-gray-900 mb-4">Race Photos</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <% @record.photo_urls.each do |url| %>
+              <a href="<%= url %>" target="_blank" class="aspect-square rounded-xl overflow-hidden bg-gray-100">
+                <img src="<%= url %>" alt="Race photo" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy">
+              </a>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Share CTA -->
+      <div class="bg-gray-900 rounded-2xl p-8 text-white text-center">
+        <h4 class="font-black text-lg mb-2 tracking-tighter">Share Your Achievement</h4>
+        <p class="text-xs text-gray-400 mb-6">완주 기록을 친구들에게 공유하세요!</p>
+        <%= link_to "전체 기록 보기", records_path, class: "block w-full text-center py-3 bg-white/10 hover:bg-white/20 rounded-xl font-bold transition-all text-sm border border-white/10" %>
+      </div>
+    </div>
+  </div>
+</div>

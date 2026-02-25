@@ -1,0 +1,189 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- 뒤로 가기 -->
+    <div class="mb-8">
+      <%= link_to race_products_path(@race), class: "inline-flex items-center text-sm font-bold text-gray-500 hover:text-gray-700" do %>
+        <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        상품 목록으로 돌아가기
+      <% end %>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- 왼쪽: 이미지 -->
+        <div class="p-8">
+          <div class="aspect-square bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl overflow-hidden">
+            <% if @product.images.attached? %>
+              <%= image_tag @product.images.first, class: "w-full h-full object-cover" %>
+            <% else %>
+              <div class="w-full h-full flex items-center justify-center">
+                <div class="text-center">
+                  <div class="text-9xl mb-4">🎽</div>
+                  <p class="text-lg text-gray-400 font-bold">이미지 준비 중</p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- 추가 이미지 (향후 구현) -->
+          <% if @product.images.count > 1 %>
+            <div class="grid grid-cols-4 gap-4 mt-4">
+              <% @product.images.each do |image| %>
+                <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-pointer hover:opacity-75 transition-opacity">
+                  <%= image_tag image, class: "w-full h-full object-cover" %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- 오른쪽: 정보 -->
+        <div class="p-8 flex flex-col">
+          <!-- 상품명 -->
+          <h1 class="text-4xl font-black text-gray-900 mb-4">
+            <%= @product.name %>
+          </h1>
+
+          <!-- 가격 -->
+          <div class="mb-6">
+            <p class="text-5xl font-black text-blue-600">
+              <%= number_to_currency(@product.price, precision: 0) %>
+            </p>
+          </div>
+
+          <!-- 재고 상태 -->
+          <div class="mb-6">
+            <% if @product.stock > 10 %>
+              <div class="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 font-bold text-sm">
+                ✅ 재고 충분 (<%= @product.stock %>개)
+              </div>
+            <% elsif @product.stock > 0 %>
+              <div class="inline-flex items-center px-4 py-2 rounded-full bg-yellow-100 text-yellow-800 font-bold text-sm">
+                ⚠️ 재고 얼마 남지 않음 (<%= @product.stock %>개)
+              </div>
+            <% else %>
+              <div class="inline-flex items-center px-4 py-2 rounded-full bg-red-100 text-red-800 font-bold text-sm">
+                ❌ 품절
+              </div>
+            <% end %>
+          </div>
+
+          <!-- 구분선 -->
+          <div class="border-t border-gray-200 my-6"></div>
+
+          <!-- 상품 설명 -->
+          <% if @product.description.present? %>
+            <div class="mb-6">
+              <h3 class="text-lg font-black text-gray-900 mb-3">상품 설명</h3>
+              <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+                <%= @product.description %>
+              </p>
+            </div>
+          <% end %>
+
+          <!-- 옵션 정보 -->
+          <div class="mb-6 space-y-3">
+            <% if @product.size.present? %>
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-bold text-gray-500 w-20">📏 사이즈</span>
+                <span class="text-sm font-bold text-gray-900"><%= @product.size %></span>
+              </div>
+            <% end %>
+            <% if @product.color.present? %>
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-bold text-gray-500 w-20">🎨 색상</span>
+                <span class="text-sm font-bold text-gray-900"><%= @product.color %></span>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- 구분선 -->
+          <div class="border-t border-gray-200 my-6"></div>
+
+          <!-- 수량 선택 및 구매 버튼 (향후 구현) -->
+          <div class="mt-auto">
+            <% if user_signed_in? %>
+              <% if @product.available? %>
+                <%= form_with url: add_item_cart_path, method: :post, data: { controller: "quantity" } do |f| %>
+                  <%= f.hidden_field :product_id, value: @product.id %>
+
+                  <div class="space-y-4">
+                    <!-- 수량 선택 -->
+                    <div>
+                      <label class="block text-sm font-bold text-gray-700 mb-2">수량</label>
+                      <div class="flex items-center gap-3">
+                        <button type="button" data-action="click->quantity#decrease" class="w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-lg font-bold text-xl transition-colors">
+                          -
+                        </button>
+                        <%= f.number_field :quantity,
+                            value: 1,
+                            min: 1,
+                            max: @product.stock,
+                            data: { quantity_target: "input" },
+                            class: "w-20 h-12 text-center border-2 border-gray-200 rounded-lg font-bold text-xl" %>
+                        <button type="button" data-action="click->quantity#increase" data-max="<%= @product.stock %>" class="w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-lg font-bold text-xl transition-colors">
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- 구매 버튼 -->
+                    <div class="flex gap-3">
+                      <%= f.submit "🛒 장바구니 담기", class: "flex-1 py-4 bg-gray-100 hover:bg-gray-200 text-gray-900 font-black rounded-xl transition-all text-lg cursor-pointer" %>
+                      <button type="button" class="flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl transition-all text-lg shadow-lg">
+                        💳 바로 구매
+                      </button>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+                  <p class="text-red-800 font-bold">❌ 죄송합니다. 현재 품절된 상품입니다.</p>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+                <p class="text-yellow-800 font-bold mb-3">🔐 상품을 구매하려면 로그인이 필요합니다</p>
+                <%= link_to "로그인하기", new_user_session_path, class: "inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 관련 상품 -->
+    <% if @related_products.any? %>
+      <div class="mt-16">
+        <h2 class="text-3xl font-black text-gray-900 mb-8">🎁 이런 상품은 어때요?</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <% @related_products.each do |product| %>
+            <%= link_to product_path(product), class: "group" do %>
+              <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all hover:shadow-xl hover:scale-105">
+                <div class="aspect-square bg-gradient-to-br from-blue-50 to-purple-50">
+                  <% if product.images.attached? %>
+                    <%= image_tag product.images.first, class: "w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" %>
+                  <% else %>
+                    <div class="w-full h-full flex items-center justify-center">
+                      <div class="text-5xl">🎽</div>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="p-4">
+                  <h3 class="font-black text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    <%= product.name %>
+                  </h3>
+                  <p class="text-xl font-black text-blue-600">
+                    <%= number_to_currency(product.price, precision: 0) %>
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

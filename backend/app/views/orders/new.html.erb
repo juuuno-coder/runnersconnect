@@ -1,0 +1,137 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- 헤더 -->
+    <div class="mb-12">
+      <h1 class="text-4xl font-black text-gray-900 mb-2">💳 주문하기</h1>
+      <p class="text-lg text-gray-600">배송 정보를 입력해주세요</p>
+    </div>
+
+    <%= form_with model: @order, url: orders_path, method: :post, class: "grid grid-cols-1 lg:grid-cols-3 gap-8" do |f| %>
+      <!-- 왼쪽: 배송 정보 입력 -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- 배송지 정보 -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+          <h2 class="text-2xl font-black text-gray-900 mb-6">📦 배송지 정보</h2>
+
+          <div class="space-y-4">
+            <div>
+              <%= f.label :shipping_address, "배송 주소", class: "block text-sm font-bold text-gray-700 mb-2" %>
+              <%= f.text_area :shipping_address,
+                  rows: 3,
+                  required: true,
+                  placeholder: "예: 서울특별시 강남구 테헤란로 123, 우리빌딩 4층",
+                  class: "block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all" %>
+              <p class="text-xs text-gray-500 mt-2">💡 대회 당일 현장 수령도 가능합니다</p>
+            </div>
+
+            <div>
+              <%= f.label :shipping_phone, "연락처", class: "block text-sm font-bold text-gray-700 mb-2" %>
+              <%= f.tel_field :shipping_phone,
+                  required: true,
+                  placeholder: "010-1234-5678",
+                  class: "block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- 주문 상품 목록 -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+          <h2 class="text-2xl font-black text-gray-900 mb-6">📋 주문 상품</h2>
+
+          <div class="space-y-4">
+            <% @cart.cart_items.each do |item| %>
+              <div class="flex gap-4 pb-4 border-b border-gray-100 last:border-0">
+                <!-- 상품 이미지 -->
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg overflow-hidden flex-shrink-0">
+                  <% if item.product.images.attached? %>
+                    <%= image_tag item.product.images.first, class: "w-full h-full object-cover" %>
+                  <% else %>
+                    <div class="w-full h-full flex items-center justify-center">
+                      <div class="text-2xl">🎽</div>
+                    </div>
+                  <% end %>
+                </div>
+
+                <!-- 상품 정보 -->
+                <div class="flex-1">
+                  <h3 class="font-bold text-gray-900 mb-1"><%= item.product.name %></h3>
+                  <p class="text-sm text-gray-500"><%= item.product.race.title %></p>
+                  <div class="flex items-center gap-2 mt-2">
+                    <% if item.product.size.present? %>
+                      <span class="text-xs px-2 py-1 bg-gray-100 rounded font-bold text-gray-700">
+                        <%= item.product.size %>
+                      </span>
+                    <% end %>
+                    <% if item.product.color.present? %>
+                      <span class="text-xs px-2 py-1 bg-gray-100 rounded font-bold text-gray-700">
+                        <%= item.product.color %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+
+                <!-- 수량 및 가격 -->
+                <div class="text-right">
+                  <p class="text-sm text-gray-500 mb-1">
+                    <%= number_to_currency(item.unit_price, precision: 0) %> × <%= item.quantity %>
+                  </p>
+                  <p class="text-lg font-black text-blue-600">
+                    <%= number_to_currency(item.subtotal, precision: 0) %>
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- 오른쪽: 결제 정보 -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 sticky top-24">
+          <h3 class="text-xl font-black text-gray-900 mb-6">💰 결제 정보</h3>
+
+          <!-- 상품 금액 -->
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-sm font-bold text-gray-600">상품 금액</span>
+            <span class="font-bold text-gray-900">
+              <%= number_to_currency(@cart.total_amount, precision: 0) %>
+            </span>
+          </div>
+
+          <!-- 배송비 -->
+          <div class="flex justify-between items-center mb-6 pb-6 border-b border-gray-200">
+            <span class="text-sm font-bold text-gray-600">배송비</span>
+            <span class="font-bold text-green-600">무료</span>
+          </div>
+
+          <!-- 총 결제 금액 -->
+          <div class="flex justify-between items-center mb-8 p-4 bg-blue-50 rounded-xl">
+            <span class="text-lg font-black text-gray-900">총 결제 금액</span>
+            <span class="text-3xl font-black text-blue-600">
+              <%= number_to_currency(@cart.total_amount, precision: 0) %>
+            </span>
+          </div>
+
+          <!-- 결제 방법 (향후 구현) -->
+          <div class="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+            <p class="text-sm text-yellow-800">
+              💡 <strong>안내</strong><br>
+              결제는 대회 당일 현장에서 진행됩니다.<br>
+              주문 확인 후 배송 준비가 시작됩니다.
+            </p>
+          </div>
+
+          <!-- 주문하기 버튼 -->
+          <%= f.submit "주문하기", class: "w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl transition-all text-lg shadow-lg cursor-pointer mb-3" %>
+
+          <%= link_to "장바구니로 돌아가기", cart_path, class: "block w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold rounded-xl transition-all text-center" %>
+
+          <!-- 이용 약관 -->
+          <div class="mt-6 text-xs text-gray-500 leading-relaxed">
+            주문 완료 시 <a href="#" class="text-blue-600 hover:underline">이용약관</a> 및 <a href="#" class="text-blue-600 hover:underline">개인정보 처리방침</a>에 동의하는 것으로 간주됩니다.
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

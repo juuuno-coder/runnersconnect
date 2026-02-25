@@ -1,0 +1,45 @@
+<div class="min-h-screen flex flex-col items-center justify-center p-6 sm:p-12">
+  <div class="max-w-md w-full">
+    <div class="text-center mb-10">
+      <h2 class="text-4xl font-black text-gray-900 tracking-tighter mb-2">시작하기 🏃‍♀️</h2>
+      <p class="text-gray-500 font-medium">함께 달릴 준비가 되셨나요?</p>
+    </div>
+
+    <div class="bg-white rounded-[2.5rem] shadow-xl shadow-blue-50 border border-gray-100 p-8 sm:p-10">
+      <%= form_for(resource, as: resource_name, url: user_registration_path, html: { class: "space-y-5" }) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <div>
+          <%= f.label :name, "이름", class: "block text-sm font-bold text-gray-700 mb-2" %>
+          <%= f.text_field :name, autofocus: true, placeholder: "러닝왕", class: "block w-full px-5 py-4 rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all" %>
+        </div>
+
+        <div>
+          <%= f.label :email, "이메일 주소", class: "block text-sm font-bold text-gray-700 mb-2" %>
+          <%= f.email_field :email, autocomplete: "email", placeholder: "runners@example.com", class: "block w-full px-5 py-4 rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all" %>
+        </div>
+
+        <div>
+          <%= f.label :password, "비밀번호", class: "block text-sm font-bold text-gray-700 mb-2" %>
+          <%= f.password_field :password, autocomplete: "new-password", placeholder: "6자 이상", class: "block w-full px-5 py-4 rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all" %>
+        </div>
+
+        <div>
+          <%= f.label :password_confirmation, "비밀번호 확인", class: "block text-sm font-bold text-gray-700 mb-2" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "한 번 더", class: "block w-full px-5 py-4 rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all" %>
+        </div>
+
+        <div class="pt-6">
+          <%= f.submit "러너스 커넥트 가입하기", class: "w-full py-5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl shadow-xl shadow-blue-100 transition-all active:scale-[0.98] text-lg" %>
+        </div>
+      <% end %>
+
+      <div class="mt-8 text-center pt-8 border-t border-gray-50">
+        <p class="text-sm text-gray-400 font-bold mb-4">이미 계정이 있으신가요?</p>
+        <%- if controller_name != 'sessions' %>
+          <%= link_to "로그인하러 가기", new_user_session_path, class: "inline-block py-3 px-8 bg-gray-50 hover:bg-gray-100 text-gray-900 font-black rounded-xl transition-all" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

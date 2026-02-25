@@ -1,0 +1,380 @@
+<div class="bg-white min-h-screen pb-24" data-controller="race-show">
+  <!-- Hero Image Section -->
+  <div class="relative h-[30vh] md:h-[40vh] w-full overflow-hidden bg-gray-900">
+    <!-- Overlay Gradient -->
+    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent z-10"></div>
+    
+    <!-- Hero Image (Placeholder) -->
+    <img src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="Race Hero" class="w-full h-full object-cover opacity-80 animate-fade-in-down">
+    
+    <!-- Title Area (Bottom Left) -->
+    <div class="absolute bottom-0 left-0 w-full p-6 md:p-12 z-20">
+      <div class="max-w-6xl mx-auto">
+        <span class="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-black rounded-full uppercase tracking-widest mb-4 shadow-lg shadow-blue-900/50">
+          <%= @race.status.upcase %>
+        </span>
+        <h1 class="text-4xl md:text-6xl font-black text-white leading-tight tracking-tighter mb-2 drop-shadow-lg">
+          <%= @race.title %>
+        </h1>
+        <div class="flex items-center text-gray-300 text-sm md:text-base font-medium space-x-4">
+          <span class="flex items-center">
+            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <%= @race.location %>
+          </span>
+          <span class="w-1 h-1 bg-gray-500 rounded-full"></span>
+          <span class="flex items-center">
+            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <%= @race.start_at.strftime("%Y.%m.%d") %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 py-16">
+    <div class="grid lg:grid-cols-3 gap-12">
+      <!-- Left: Content Area -->
+      <div class="lg:col-span-2">
+        <!-- Tabs Navigation -->
+        <div class="flex border-b border-gray-100 mb-8 sticky top-[72px] bg-white/95 backdrop-blur z-30 overflow-x-auto no-scrollbar">
+          <button data-action="click->race-show#switchTab" data-tab="overview" data-race-show-target="tab" class="px-6 py-4 text-sm font-bold text-blue-600 border-b-2 border-blue-600 whitespace-nowrap transition-colors">
+            대회 개요
+          </button>
+          <button data-action="click->race-show#switchTab" data-tab="course" data-race-show-target="tab" class="px-6 py-4 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-700 whitespace-nowrap transition-colors">
+            코스 안내
+          </button>
+          <button data-action="click->race-show#switchTab" data-tab="venue" data-race-show-target="tab" class="px-6 py-4 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-700 whitespace-nowrap transition-colors">
+            오시는 길
+          </button>
+          <button data-action="click->race-show#switchTab" data-tab="benefits" data-race-show-target="tab" class="px-6 py-4 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-700 whitespace-nowrap transition-colors">
+            참가 혜택
+          </button>
+          <button data-action="click->race-show#switchTab" data-tab="rules" data-race-show-target="tab" class="px-6 py-4 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-700 whitespace-nowrap transition-colors">
+            유의사항
+          </button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="space-y-12">
+          <!-- Overview -->
+          <div data-race-show-content="overview" data-race-show-target="content" class="animate-fade-in">
+            <h2 class="text-2xl font-black text-gray-900 mb-6">About This Race</h2>
+            <div class="prose prose-lg text-gray-600 leading-relaxed mb-12">
+              <%= @race.description %>
+            </div>
+
+            <div class="bg-gray-50 rounded-[2rem] p-8 mb-12">
+              <h3 class="text-lg font-black text-gray-900 mb-6">Organizer Info</h3>
+              <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm text-xl">🏢</div>
+                <div>
+                  <p class="font-bold text-gray-900"><%= @race.organizer_name %></p>
+                  <p class="text-sm text-gray-500">공식 주최사</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+              <img src="https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="rounded-2xl w-full h-48 object-cover shadow-sm transition-transform hover:scale-[1.02]">
+              <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="rounded-2xl w-full h-48 object-cover shadow-sm transition-transform hover:scale-[1.02]">
+            </div>
+          </div>
+
+          <!-- Course -->
+          <div data-race-show-content="course" data-race-show-target="content" class="hidden animate-fade-in">
+            <h2 class="text-2xl font-black text-gray-900 mb-6">Course Map</h2>
+            
+            <div class="relative bg-gray-100 rounded-[2rem] overflow-hidden mb-8 shadow-inner">
+               <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="Course Map" class="w-full h-80 object-cover">
+               <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                 <button class="bg-white/90 backdrop-blur-md px-6 py-3 rounded-xl font-bold text-gray-900 shadow-lg hover:bg-white transition-colors">
+                   코스 맵 크게 보기 (PDF)
+                 </button>
+               </div>
+            </div>
+
+            <div class="mb-12">
+               <h3 class="text-lg font-black text-gray-900 mb-4">Elevation Profile</h3>
+               <div class="h-48 bg-gray-50 rounded-2xl p-6 border border-gray-100 flex items-end justify-between space-x-1">
+                  <!-- Fake Elevation Bars -->
+                  <% 20.times do |i| %>
+                    <div class="w-full bg-blue-200 rounded-t-sm hover:bg-blue-300 transition-colors relative group" style="height: <%= rand(30..90) %>%">
+                       <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                         <%= i * 2 %>km
+                       </div>
+                    </div>
+                  <% end %>
+               </div>
+               <div class="flex justify-between text-xs text-gray-400 font-bold mt-2 uppercase tracking-widest">
+                  <span>Start</span>
+                  <span>Finish</span>
+               </div>
+            </div>
+
+            <h3 class="text-lg font-black text-gray-900 mb-4">Course Highlights</h3>
+            <ul class="space-y-6">
+               <li class="flex items-start">
+                  <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold mr-4 flex-shrink-0">1</div>
+                  <div>
+                    <h4 class="font-bold text-gray-900 mb-1">광화문 광장 출발</h4>
+                    <p class="text-gray-500 text-sm">서울의 심장부, 광화문 광장에서 이순신 장군상의 기운을 받으며 출발합니다. 넓게 펼쳐진 대로를 달리며 벅찬 감동을 느껴보세요.</p>
+                  </div>
+               </li>
+               <li class="flex items-start">
+                  <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold mr-4 flex-shrink-0">2</div>
+                  <div>
+                    <h4 class="font-bold text-gray-900 mb-1">한강 시민공원 진입 (15km 지점)</h4>
+                    <p class="text-gray-500 text-sm">청담대교 아래를 지나 한강 시민공원으로 진입합니다. 시원한 강바람을 맞으며 지친 몸과 마음을 리프레시하세요.</p>
+                  </div>
+               </li>
+               <li class="flex items-start">
+                  <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold mr-4 flex-shrink-0">3</div>
+                  <div>
+                    <h4 class="font-bold text-gray-900 mb-1">잠실 종합운동장 골인</h4>
+                    <p class="text-gray-500 text-sm">올림픽의 역사가 살아 숨 쉬는 잠실 종합운동장 주경기장 트랙을 밟으며 피니시 라인을 통과합니다.</p>
+                  </div>
+               </li>
+            </ul>
+          </div>
+          
+          <!-- Venue (Placeholder) -->
+          <div data-race-show-content="venue" data-race-show-target="content" class="hidden animate-fade-in">
+             <h2 class="text-2xl font-black text-gray-900 mb-6">Venue Location</h2>
+             <div class="bg-gray-100 rounded-[2rem] h-80 flex items-center justify-center text-gray-400 font-bold mb-6 overflow-hidden relative group">
+                <!-- Static Map Image -->
+                <img src="https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="Map" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="bg-white/90 backdrop-blur-md px-6 py-3 rounded-xl font-bold text-gray-900 shadow-lg">
+                      지도 보기 (Kakao Map)
+                    </span>
+                </div>
+             </div>
+             <div class="flex items-start mb-6">
+                <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 mr-4 flex-shrink-0">
+                  <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                </div>
+                <div>
+                  <p class="font-black text-gray-900 text-lg mb-1"><%= @race.location %></p>
+                  <p class="text-gray-500 font-medium text-sm">서울특별시 종로구 세종대로 172</p>
+                </div>
+             </div>
+             
+             <div class="bg-blue-50 border border-blue-100 rounded-2xl p-6">
+               <h4 class="font-bold text-blue-800 mb-3">🚗 주차 안내</h4>
+               <p class="text-blue-600 text-sm leading-relaxed">
+                 대회 당일 교통 통제로 인해 행사장 내 주차가 **불가**합니다. 인근 공영주차장을 이용하시거나, 가급적 대중교통(지하철 5호선 광화문역)을 이용해 주시기 바랍니다.
+               </p>
+             </div>
+          </div>
+
+          <!-- Benefits -->
+          <div data-race-show-content="benefits" data-race-show-target="content" class="hidden animate-fade-in">
+             <h2 class="text-2xl font-black text-gray-900 mb-6">Participant Benefits</h2>
+             
+             <div class="bg-gray-900 rounded-[2.5rem] p-8 text-white mb-12 relative overflow-hidden">
+               <div class="absolute top-0 right-0 p-12 opacity-10">
+                 <svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+               </div>
+               <div class="relative z-10 grid md:grid-cols-2 gap-8 items-center">
+                 <div>
+                   <span class="text-yellow-400 font-bold uppercase tracking-widest text-xs mb-2 block">Premium Package</span>
+                   <h3 class="text-3xl font-black mb-4">Official Race Kit</h3>
+                   <ul class="space-y-3 text-gray-300">
+                     <li class="flex items-center"><svg class="w-5 h-5 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>기능성 러닝 티셔츠 (블랙/화이트 택1)</li>
+                     <li class="flex items-center"><svg class="w-5 h-5 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>배번호표 및 기록 계측 칩</li>
+                     <li class="flex items-center"><svg class="w-5 h-5 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>대회 안내 책자 및 물품 보관 비닐</li>
+                     <li class="flex items-center"><svg class="w-5 h-5 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>완주 메달 (완주 시 증정)</li>
+                   </ul>
+                 </div>
+                 <div class="bg-white/10 rounded-3xl p-6 backdrop-blur-sm border border-white/10">
+                   <div class="aspect-square bg-white rounded-2xl flex items-center justify-center overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1579758629938-03607ccdbaba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" class="w-full h-full object-cover">
+                   </div>
+                   <p class="text-center text-xs font-bold text-gray-400 mt-4 uppercase tracking-widest">2026 Official T-Shirt Design</p>
+                 </div>
+               </div>
+             </div>
+             
+             <h3 class="text-lg font-black text-gray-900 mb-6">Finishers Reward</h3>
+             <div class="grid sm:grid-cols-3 gap-6">
+                <!-- Medal -->
+                <div class="bg-gray-50 rounded-[2rem] p-6 text-center border border-gray-100 group hover:border-blue-200 transition-colors">
+                   <div class="w-24 h-24 mx-auto bg-white rounded-full shadow-lg flex items-center justify-center text-4xl mb-4 group-hover:scale-110 transition-transform">🥇</div>
+                   <h4 class="font-bold text-gray-900 mb-1">Finisher Medal</h4>
+                   <p class="text-xs text-gray-500">완주자 전원에게 증정되는 고품격 메달</p>
+                </div>
+                <!-- Snack -->
+                <div class="bg-gray-50 rounded-[2rem] p-6 text-center border border-gray-100 group hover:border-blue-200 transition-colors">
+                   <div class="w-24 h-24 mx-auto bg-white rounded-full shadow-lg flex items-center justify-center text-4xl mb-4 group-hover:scale-110 transition-transform">🍩</div>
+                   <h4 class="font-bold text-gray-900 mb-1">Refreshments</h4>
+                   <p class="text-xs text-gray-500">초코파이, 바나나, 이온음료 등 간식 제공</p>
+                </div>
+                <!-- Record Certificate -->
+                <div class="bg-gray-50 rounded-[2rem] p-6 text-center border border-gray-100 group hover:border-blue-200 transition-colors">
+                   <div class="w-24 h-24 mx-auto bg-white rounded-full shadow-lg flex items-center justify-center text-4xl mb-4 group-hover:scale-110 transition-transform">📄</div>
+                   <h4 class="font-bold text-gray-900 mb-1">Mobile Certificate</h4>
+                   <p class="text-xs text-gray-500">웹사이트를 통해 모바일 기록증 발급</p>
+                </div>
+             </div>
+          </div>
+
+          <!-- Rules -->
+          <div data-race-show-content="rules" data-race-show-target="content" class="hidden animate-fade-in">
+            <h2 class="text-2xl font-black text-gray-900 mb-6">Rules & Regulations</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+              <li>참가자는 본인의 건강 상태를 고려하여 대회에 참가해야 합니다.</li>
+              <li>대회 당일 신분증을 반드시 지참해야 합니다.</li>
+              <li>참가비 환불은 접수 마감일 전까지만 가능합니다.</li>
+              <li>우천 시에도 대회는 진행됩니다. (단, 천재지변 시 취소 가능)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Sticky Order Card (Desktop) / Bottom Sheet (Mobile) -->
+      <div class="lg:col-span-1">
+        <div class="sticky top-24 bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-200 border border-gray-100 ring-1 ring-gray-950/5">
+          <h3 class="font-black text-xl text-gray-900 mb-6">참가 부문 선택</h3>
+          
+          <%= form_with url: new_registration_path, method: :get, local: true do |f| %>
+            <div class="space-y-4 mb-8">
+              <% @editions.each_with_index do |edition, index| %>
+                <label class="edition-card block relative p-4 rounded-2xl border-2 border-gray-100 cursor-pointer transition-all hover:border-blue-200 <%= index.zero? ? 'bg-blue-50 ring-2 ring-blue-600 border-transparent' : 'bg-white' %>" data-action="click->race-show#selectEdition" data-price="<%= edition.price %>">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-gray-900"><%= edition.name %></span>
+                    <span class="font-black text-blue-600"><%= number_to_currency(edition.price, unit: '₩', precision: 0) %></span>
+                  </div>
+                  <div class="flex items-center justify-end mt-2">
+                     <% if edition.full? %>
+                       <span class="text-xs font-black text-red-500 bg-red-50 px-2 py-0.5 rounded-md">SOLD OUT</span>
+                     <% else %>
+                       <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md"><%= edition.remaining_slots %>명 남음</span>
+                     <% end %>
+                  </div>
+                  <%= f.radio_button :race_edition_id, edition.id, checked: index.zero?, class: "sr-only", data: { race_show_target: "editionInput" } %>
+                </label>
+              <% end %>
+            </div>
+
+            <div class="border-t border-gray-100 pt-6 mb-8">
+              <div class="flex justify-between items-end">
+                <span class="text-sm font-bold text-gray-400">Total Price</span>
+                <span data-race-show-target="total" class="text-3xl font-black text-gray-900 tracking-tight">
+                  <%= number_to_currency(@editions.first&.price || 0, unit: '₩', precision: 0) %>
+                </span>
+              </div>
+            </div>
+
+            <%= f.submit "참가 신청하기", class: "w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] text-lg" %>
+            
+            <p class="text-center text-[10px] text-gray-400 font-bold mt-4 flex items-center justify-center">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              Secure Checkout
+            </p>
+          <% end %>
+        </div>
+
+        <!-- Goods Store Promo -->
+        <% if @race.products.where(status: 'active').where('stock > 0').any? %>
+          <div class="mt-8 bg-gradient-to-br from-purple-900 to-pink-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden">
+            <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+            <h4 class="font-black text-lg mb-2 relative z-10">대회 굿즈 스토어 🛍️</h4>
+            <p class="text-xs text-purple-100 mb-6 leading-relaxed relative z-10">
+              대회 참가 기념품과 러닝 용품을 만나보세요!<br>
+              <span class="font-bold text-yellow-300"><%= @race.products.where(status: 'active').where('stock > 0').count %>개</span>의 상품이 있습니다.
+            </p>
+            <%= link_to race_products_path(@race), class: "block w-full text-center py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl font-bold transition-all text-xs relative z-10 backdrop-blur-sm" do %>
+              굿즈 스토어 구경하기 →
+            <% end %>
+          </div>
+        <% end %>
+
+        <!-- Crew Promo -->
+        <div class="mt-8 bg-gradient-to-br from-indigo-900 to-blue-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden">
+          <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+          <h4 class="font-black text-lg mb-2 relative z-10">크루 단체 참가 🏃‍♂️</h4>
+          <p class="text-xs text-blue-100 mb-6 leading-relaxed relative z-10">
+            5인 이상 크루 참가 시 특별 혜택을 드립니다.<br>
+            크루 리더에게 받은 코드로 할인받으세요!
+          </p>
+          <%= link_to "크루 안내 보기", crews_path, class: "block w-full text-center py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl font-bold transition-all text-xs relative z-10 backdrop-blur-sm" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Races Section -->
+    <% if @race.related_races.any? || @race.organizer_other_races.any? %>
+      <div class="mt-16">
+        <!-- Same Organizer Races -->
+        <% if @race.organizer_other_races.any? %>
+          <section class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-2xl font-black text-gray-900">
+                <%= @race.organizer&.business_name %>의 다른 대회
+              </h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6">
+              <% @race.organizer_other_races.each do |other_race| %>
+                <%= link_to race_path(other_race), class: "group block bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg hover:border-blue-200 transition-all" do %>
+                  <div class="aspect-video bg-gray-100 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                         alt="<%= other_race.title %>">
+                  </div>
+                  <div class="p-4">
+                    <h3 class="font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors"><%= other_race.title %></h3>
+                    <div class="flex items-center text-sm text-gray-500 gap-2">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                      <%= other_race.start_at.strftime('%Y.%m.%d') %>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-500 gap-2 mt-1">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                      <%= other_race.location %>
+                    </div>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
+
+        <!-- Related Races (Similar Time/Location) -->
+        <% if @race.related_races.any? %>
+          <section>
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-2xl font-black text-gray-900">비슷한 시기의 다른 대회</h2>
+            </div>
+            <div class="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <% @race.related_races.each do |related_race| %>
+                <%= link_to race_path(related_race), class: "group block bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md hover:border-blue-200 transition-all" do %>
+                  <div class="aspect-video bg-gray-100 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                         alt="<%= related_race.title %>">
+                  </div>
+                  <div class="p-3">
+                    <h3 class="font-bold text-sm text-gray-900 mb-1 group-hover:text-blue-600 transition-colors line-clamp-2"><%= related_race.title %></h3>
+                    <p class="text-xs text-gray-500"><%= related_race.start_at.strftime('%m.%d') %></p>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Mobile Floating Action Button (Sticky Bottom) -->
+  <div class="lg:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 p-4 pb-8 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+    <div class="flex items-center gap-4">
+      <div class="flex-1">
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Price</p>
+        <p class="text-xl font-black text-gray-900"><%= number_to_currency(@editions.first&.price || 0, unit: '₩', precision: 0) %></p>
+      </div>
+      <button data-action="click->race-show#submitForm" class="flex-1 py-3 bg-blue-600 text-white font-black rounded-xl shadow-lg shadow-blue-200 text-sm">
+        참가 신청하기
+      </button>
+    </div>
+  </div>
+</div>

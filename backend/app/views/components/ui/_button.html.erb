@@ -1,0 +1,17 @@
+<!--prettier-ignore-->
+<% case as %>
+<% when :link %>
+ <%= link_to href, class: button_classes, data: data do %>
+    <%= text %>
+  <% end %>
+<% when :button %>
+  <% if method.present? %>
+    <%= button_to href, method: method, class: button_classes, data: data do %>
+      <%= text %>
+    <% end %>
+  <% else %>
+    <%= button_tag class: button_classes, data: data do %>
+      <%= text %>
+    <% end %>
+  <% end %>
+<% end %>
