@@ -1,5 +1,5 @@
 class CrewsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, only: [:new, :create]
 
   # GET /crews/new
   def new
@@ -19,8 +19,10 @@ class CrewsController < ApplicationController
   # GET /crews
   def index
     @crews = Crew.includes(:leader).all
-    @led_crews = current_user.led_crews
-    @joined_crews = Crew.joins(:registrations).where(registrations: { user_id: current_user.id }).distinct
+    if user_signed_in?
+      @led_crews = current_user.led_crews
+      @joined_crews = Crew.joins(:registrations).where(registrations: { user_id: current_user.id }).distinct
+    end
   end
 
   # GET /crews/:id
